@@ -1,0 +1,239 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Contact Us - SwiftLogix Shipping Company</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="contact, SwiftLogix, shipping, logistics, Ghana, freight">
+    <meta name="description" content="Contact SwiftLogix for all your shipping and logistics needs in Ghana. Get in touch with our expert team for reliable transport solutions.">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'logistica-1.0.0/img/favicon.ico' %}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries CSS -->
+    <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <!-- Bootstrap & Template CSS -->
+    <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
+        <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
+            <h2 class="mb-2 text-white">SwiftLogix</h2>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="{% url 'home' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                <a href="{% url 'about' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+                <a href="{% url 'services' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu fade-up m-0">
+                        <a href="{% url 'pricing' %}" class="dropdown-item">Pricing Plan</a>
+                        <a href="{% url 'feature' %}" class="dropdown-item">Features</a>
+                        <a href="{% url 'quote' %}" class="dropdown-item">Free Quote</a>
+                        <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
+                        <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
+                        
+                    </div>
+                </div>
+                <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
+            </div>
+            <!-- Tracking Form -->
+            <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
+                <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
+                <button class="btn btn-primary" type="submit">Track</button>
+            </form>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Page Header Start -->
+    <div class="container-fluid page-header py-5 mb-6rem">
+        <div class="container py-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Contact Us</h1>
+            <nav aria-label="breadcrumb animated slideInDown">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Contact</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <!-- Contact Form & Map Start -->
+    <div class="container-fluid overflow-hidden py-5 px-lg-0">
+        <div class="container contact-page py-5 px-lg-0">
+            <div class="row g-5 mx-lg-0">
+                <!-- Contact Form -->
+                <div class="col-md-6 contact-form wow fadeIn" data-wow-delay="0.1s">
+                    <h6 class="text-secondary text-uppercase">Get In Touch</h6>
+                    <h1 class="mb-4">Contact For Any Query</h1>
+                    <p class="mb-4">
+                        Ready to ship with SwiftLogix? Whether you need air freight, sea freight, road transport, or warehousing services, 
+                        our expert team is here to help. Contact us today for reliable logistics solutions across Ghana and internationally.
+                    </p>
+                    <div class="bg-light p-4">
+                        <form method="post" action="{% url 'contact' %}">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+                                        <label for="name">Your Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+                                        <label for="email">Your Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="subject" name="subject" required>
+                                            <option value="">Select Service</option>
+                                            <option value="Air Freight">Air Freight Inquiry</option>
+                                            <option value="Sea Freight">Sea Freight Inquiry</option>
+                                            <option value="Road Transport">Road Transport Inquiry</option>
+                                            <option value="Warehousing">Warehousing Services</option>
+                                            <option value="Customs Clearance">Customs Clearance</option>
+                                            <option value="General Inquiry">General Inquiry</option>
+                                            <option value="Quote Request">Quote Request</option>
+                                        </select>
+                                        <label for="subject">Service Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" placeholder="Leave a message here" id="message" name="message" style="height: 100px" required></textarea>
+                                        <label for="message">Message</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Map -->
+                <div class="col-md-6 pe-lg-0 wow fadeInRight" data-wow-delay="0.1s">
+                    <div class="position-relative h-100">
+                        <iframe class="position-absolute w-100 h-100" style="object-fit: cover;"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.7175094813394!2d-0.20618002500088835!3d5.6037168949530745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9084b2b7a773%3A0x72f7bc69a20b1b8!2sKotoka%20International%20Airport!5e0!3m2!1sen!2sgh!4v1650123456789!5m2!1sen!2sgh"
+                            frameborder="0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact Form & Map End -->
+
+
+<!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 6rem;">
+        <div class="container py-5">
+            <div class="row g-5">
+                <!-- Address -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Head Office</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j8001462@gmail.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <!-- Services -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Our Services</h4>
+                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
+                </div>
+                <!-- Quick Links -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Quick Links</h4>
+                    <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
+                    <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
+                    <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
+                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
+                </div>
+                <!-- Newsletter -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Newsletter</h4>
+                    <p>Subscribe for updates on our latest logistics solutions and offers.</p>
+                    <p>Your trusted logistics partner for global shipping, freight forwarding, and secure warehousing solutions.</p>
+                    <div class="position-relative mx-auto" style="max-width: 400px;">
+                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright -->
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">SwiftLogix</a>, All Rights Reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        Designed by <a class="border-bottom" href="#">King Eben Tech</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Contact Info, Operating Hours, Footer, Back to Top, JS Libraries remain the same as your template -->
+  
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'logistica-1.0.0/lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/counterup/counterup.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/js/main.js' %}"></script>
+</body>
+</html>

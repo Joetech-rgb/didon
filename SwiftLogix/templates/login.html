@@ -1,0 +1,90 @@
+{% load static %}
+<div class="col-lg-7">
+    <div class="bg-light text-center p-5 wow fadeIn" data-wow-delay="0.5s"
+         style="border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; overflow: hidden;">
+
+        <!-- Animated background shapes -->
+        <div class="animated-bg">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <h2 class="mb-4" style="color: #333; font-weight: 700;">Client Login</h2>
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <input type="text" name="username" class="form-control border-0 animated-input"
+                           placeholder="Username" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <input type="password" name="password" class="form-control border-0 animated-input"
+                           placeholder="Password" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary w-100 py-3 animated-btn" type="submit">Login</button>
+                </div>
+            </div>
+        </form>
+        <p class="mt-3">
+            Don't have an account? <a href="{% url 'register' %}">Register here</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Animated floating background circles */
+    .animated-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .animated-bg span {
+        position: absolute;
+        display: block;
+        width: 80px;
+        height: 80px;
+        background: rgba(108, 99, 255, 0.2);
+        border-radius: 50%;
+        animation: float 6s infinite;
+        bottom: -50px;
+    }
+    .animated-bg span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .animated-bg span:nth-child(2) { left: 30%; animation-delay: 2s; }
+    .animated-bg span:nth-child(3) { left: 50%; animation-delay: 4s; }
+    .animated-bg span:nth-child(4) { left: 70%; animation-delay: 1s; }
+
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-200px) rotate(180deg); }
+        100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    /* Input hover/focus animation */
+    .animated-input {
+        transition: all 0.3s ease;
+        box-shadow: inset 0 -2px 0 #6c63ff;
+    }
+    .animated-input:focus {
+        border-color: #6c63ff;
+        box-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
+        outline: none;
+    }
+
+    /* Button hover animation */
+    .animated-btn {
+        transition: all 0.3s ease;
+    }
+    .animated-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+    }
+
+    /* Ensure form content is above animated background */
+    .bg-light { position: relative; z-index: 1; }
+</style>

@@ -1,0 +1,45 @@
+<form method="POST" action="{% url 'register' %}">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <input type="password" name="password2" placeholder="Confirm Password" required>
+    <button type="submit">Register</button>
+</form>
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}
+<a href="{% url 'login' %}">Already have an account? Login</a>
+<!-- Animated background shapes -->
+        <div class="animated-bg">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <h2 class="mb-4" style="color: #333; font-weight: 700;">Client Registration</h2>
+
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <input type="text" name="username" class="form-control border-0 animated-input"
+                           placeholder="Username" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <input type="email" name="email" class="form-control border-0 animated-input"
+                           placeholder="Email" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <input type="password" name="password" class="form-control border-0 animated-input"
+                           placeholder="Password" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <input type="password" name="password2" class="form-control border-0 animated-input"
+                           placeholder="Confirm Password" style="height: 55px;" required>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary w-100 py-3 animated-btn" type="submit">Register</button>
+                </div>
