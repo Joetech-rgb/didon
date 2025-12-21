@@ -1,45 +1,414 @@
-<form method="POST" action="{% url 'register' %}">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <input type="password" name="password2" placeholder="Confirm Password" required>
-    <button type="submit">Register</button>
-</form>
-{% for message in messages %}
-<p>{{ message }}</p>
-{% endfor %}
-<a href="{% url 'login' %}">Already have an account? Login</a>
-<!-- Animated background shapes -->
-        <div class="animated-bg">
-            <span></span><span></span><span></span><span></span>
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Register - SwiftLogix Shipping Company</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="{% static 'logistica-1.0.0/img/favicon.ico' %}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{% static 'logistica-1.0.0/css/style.css' %}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .register-section {
+            background: url('{% static "logistica-1.0.0/img/carousel-1.jpg" %}') center center/cover no-repeat;
+            position: relative;
+            min-height: 100vh;
+            padding: 4rem 0;
+        }
+
+        .register-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .register-section .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-container {
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .animated-bg span {
+            position: absolute;
+            display: block;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 159, 64, 0.3));
+            border-radius: 50%;
+            animation: float 6s infinite;
+            bottom: -50px;
+        }
+        
+        .animated-bg span:nth-child(1) { 
+            left: 10%; 
+            animation-delay: 0s;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 159, 64, 0.3));
+        }
+        .animated-bg span:nth-child(2) { 
+            left: 30%; 
+            animation-delay: 2s; 
+            width: 60px; 
+            height: 60px;
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(85, 230, 193, 0.3));
+        }
+        .animated-bg span:nth-child(3) { 
+            left: 50%; 
+            animation-delay: 4s; 
+            width: 100px; 
+            height: 100px;
+            background: linear-gradient(135deg, rgba(255, 195, 113, 0.3), rgba(255, 159, 67, 0.3));
+        }
+        .animated-bg span:nth-child(4) { 
+            left: 70%; 
+            animation-delay: 1s; 
+            width: 70px; 
+            height: 70px;
+            background: linear-gradient(135deg, rgba(196, 113, 237, 0.3), rgba(250, 112, 154, 0.3));
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-600px) rotate(360deg); opacity: 0; }
+        }
+        
+        .form-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .form-content h2 {
+            background: linear-gradient(135deg, #FF6B6B, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .animated-input {
+            height: 55px;
+            border: 2px solid rgba(255, 107, 107, 0.3) !important;
+            background: white !important;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .animated-input:focus {
+            border-color: #FF6B6B !important;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.4) !important;
+            outline: none;
+        }
+        
+        .animated-btn {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #FF6B6B, #FFA500);
+            border: none;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+        
+        .animated-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FF6B6B);
+        }
+        
+        .register-link {
+            margin-top: 1rem;
+        }
+        
+        .register-link a {
+            color: #FF6B6B;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            color: #FFA500;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
+    </div>
+    <!-- Spinner End -->
 
-        <h2 class="mb-4" style="color: #333; font-weight: 700;">Client Registration</h2>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
+        <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
+            <h2 class="mb-2 text-white">SwiftLogix</h2>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="{% url 'home' %}" class="nav-item nav-link">Home</a>
+                <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
+                <a href="{% url 'services' %}" class="nav-item nav-link">Services</a>
+                <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu fade-up m-0">
+                        <a href="{% url 'pricing' %}" class="dropdown-item">Pricing Plan</a>
+                        <a href="{% url 'feature' %}" class="dropdown-item">Features</a>
+                        <a href="{% url 'quote' %}" class="dropdown-item">Free Quote</a>
+                        <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
+                        <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
+                    </div>
+                </div>
+                <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+            </div>
+            
+            <!-- Tracking Form -->
+            <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
+                <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
+                <button class="btn btn-primary" type="submit">Track</button>
+            </form>
+        </div>
+    </nav>
+    <!-- Navbar End -->
 
-        <form method="POST" action="{% url 'register' %}">
-            {% csrf_token %}
-            {% for message in messages %}
-                <div class="alert alert-info">{{ message }}</div>
-            {% endfor %}
+    <!-- Register Start -->
+    <div class="container-xxl py-5" style="background: url('{% static "logistica-1.0.0/img/carousel-1.jpg" %}') center center/cover no-repeat; position: relative;">
+        <div class="container-xxl py-5 register-section">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center justify-content-center">
+                <div class="col-lg-7">
+                    <div class="login-container text-center">
+                        <!-- Animated background shapes -->
+                        <div class="animated-bg">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        
+                        <!-- Form content -->
+                        <div class="form-content">
+                            <h2>Client Registration</h2>
+                            
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                            
+                            <form method="POST" action="{% url 'register' %}">
+                                {% csrf_token %}
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <input type="text" 
+                                               name="username" 
+                                               class="form-control animated-input"
+                                               placeholder="Username" 
+                                               required>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="email" 
+                                               name="email" 
+                                               class="form-control animated-input"
+                                               placeholder="Email" 
+                                               required>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <input type="text" 
+                                               name="first_name" 
+                                               class="form-control animated-input"
+                                               placeholder="First Name (Optional)">
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <input type="text" 
+                                               name="last_name" 
+                                               class="form-control animated-input"
+                                               placeholder="Last Name (Optional)">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" 
+                                               name="phone" 
+                                               class="form-control animated-input"
+                                               placeholder="Phone Number (Optional)">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" 
+                                               name="company_name" 
+                                               class="form-control animated-input"
+                                               placeholder="Company Name (Optional)">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="password" 
+                                               name="password" 
+                                               class="form-control animated-input"
+                                               placeholder="Password" 
+                                               required>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="password" 
+                                               name="password2" 
+                                               class="form-control animated-input"
+                                               placeholder="Confirm Password" 
+                                               required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary w-100 py-3 animated-btn" 
+                                                type="submit">
+                                            Register
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <p class="register-link">
+                                Already have an account? <a href="{% url 'login' %}">Login here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Register End -->
 
-            <div class="row g-3">
-                <div class="col-12">
-                    <input type="text" name="username" class="form-control border-0 animated-input"
-                           placeholder="Username" style="height: 55px;" required>
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 6rem;">
+        <div class="container py-5">
+            <div class="row g-5">
+                <!-- Address -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Head Office</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j800462@gmail.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
-                <div class="col-12">
-                    <input type="email" name="email" class="form-control border-0 animated-input"
-                           placeholder="Email" style="height: 55px;" required>
+                <!-- Services -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Our Services</h4>
+                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
                 </div>
-                <div class="col-12">
-                    <input type="password" name="password" class="form-control border-0 animated-input"
-                           placeholder="Password" style="height: 55px;" required>
+                <!-- Quick Links -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Quick Links</h4>
+                    <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
+                    <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
+                    <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
+                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
                 </div>
-                <div class="col-12">
-                    <input type="password" name="password2" class="form-control border-0 animated-input"
-                           placeholder="Confirm Password" style="height: 55px;" required>
+                <!-- Newsletter -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Newsletter</h4>
+                    <p>Subscribe for updates on our latest logistics solutions and offers.</p>
+                    <div class="position-relative mx-auto" style="max-width: 400px;">
+                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+                    </div>
                 </div>
-                <div class="col-12">
-                    <button class="btn btn-primary w-100 py-3 animated-btn" type="submit">Register</button>
+            </div>
+        </div>
+        <!-- Copyright -->
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">SwiftLogix</a>, All Rights Reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        Designed by <a class="border-bottom" href="#">King Eben Tech</a>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top Button -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top">
+        <i class="bi bi-arrow-up"></i>
+    </a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'logistica-1.0.0/lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/counterup/counterup.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'logistica-1.0.0/js/main.js' %}?v=2"></script>
+</body>
+</html>

@@ -1,14 +1,12 @@
 # SwiftLogix/views.py
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import Shipment, TrackingUpdate, QuoteRequest
-from django.utils import timezone
-from django.contrib import messages
-from .models import ContactMessage
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import Shipment, TrackingUpdate, QuoteRequest, ContactMessage, UserProfile
 
 
 def home(request):
@@ -48,21 +46,27 @@ def feature(request):
 
 def terms(request):
     return render(request, 'terms.html')
+
 def help(request):
     return render(request, 'help.html')
+
 def air(request):
     return render(request, 'air.html')  
+
 def sea(request):
     return render(request, 'sea.html')
+
 def road(request):
     return render(request, 'road.html')
+
 def warehouse(request):
     return render(request, 'warehouse.html')
+
 def customs(request):
     return render(request, 'customs.html')
+
 def express(request):
     return render(request, 'express.html')
-
 
 def track(request):
     tracking_number = request.GET.get("tracking_number")
@@ -70,8 +74,6 @@ def track(request):
     if tracking_number:
         shipment = get_object_or_404(Shipment, tracking_id=tracking_number)
     return render(request, "track.html", {"shipment": shipment})
-
-
 
 def quote(request):
     if request.method == 'POST':
@@ -85,12 +87,12 @@ def quote(request):
                 destination=request.POST.get('destination', ''),
                 weight=request.POST.get('weight', ''),
                 dimensions=request.POST.get('dimensions', ''),
-                special_note=request.POST.get('note', '')
+                special_note=request.POST.get('note', ''),
+                user=request.user if request.user.is_authenticated else None  # Link to user if logged in
             )
             messages.success(request, 'Your quote request has been submitted successfully! We will contact you soon.')
-            return redirect('quote')  # <-- Important to redirect after POST
+            return redirect('quote')
         except Exception as e:
-            # Show the real error for debugging
             messages.error(request, f"There was an error: {e}")
     
     return render(request, 'quote.html')
@@ -189,42 +191,149 @@ def track_shipment_api(request):
         'success': False,
         'error': 'Invalid request method'
     })
-# Login view
-def login(request):
+
+
+# ============================================
+# AUTHENTICATION VIEWS (UPDATED & IMPROVED)
+# ============================================
+
+def login_view(request):
+    """Login view for users"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            messages.success(request, f"Welcome, {user.username}!")
-            return redirect('home')  # or a dashboard page
+        
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+            next_url = request.GET.get('next', 'dashboard')
+            return redirect(next_url)
         else:
             messages.error(request, "Invalid username or password")
+    
     return render(request, 'login.html')
 
-# Logout view
-def logout(request):
-    logout(request)
-    messages.success(request, "You have been logged out.")
+
+def logout_view(request):
+    """Logout view"""
+    auth_logout(request)
+    messages.info(request, "You have been logged out successfully.")
     return redirect('home')
 
-# Register view (for clients)
-def register(request):
+
+def register_view(request):
+    """Registration view for new users"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
-        password = request.POST.get('password')
+        first_name = request.POST.get('first_name', '')  # Optional
+        last_name = request.POST.get('last_name', '')    # Optional
+        password = request.POST.get('password')          # ← Changed from password1
         password2 = request.POST.get('password2')
+        phone = request.POST.get('phone', '')
+        company_name = request.POST.get('company_name', '')
+        
+        # Validation
+        if not username or not email or not password:
+            messages.error(request, "Please fill in all required fields!")
+            return redirect('register')
         
         if password != password2:
             messages.error(request, "Passwords do not match!")
-        elif User.objects.filter(username=username).exists():
+            return redirect('register')
+        
+        if len(password) < 6:  # Changed to 6 for easier testing
+            messages.error(request, "Password must be at least 6 characters long!")
+            return redirect('register')
+        
+        if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists!")
-        elif User.objects.filter(email=email).exists():
+            return redirect('register')
+        
+        if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered!")
-        else:
-            User.objects.create_user(username=username, email=email, password=password)
-            messages.success(request, "Registration successful! You can log in now.")
-            return redirect('login')
+            return redirect('register')
+        
+        try:
+            # Create user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+            
+            # Create user profile
+            UserProfile.objects.create(
+                user=user,
+                phone=phone,
+                company_name=company_name
+            )
+            
+            # IMPORTANT: Log the user in immediately
+            auth_login(request, user)
+            
+            messages.success(request, f"Account created successfully! Welcome, {first_name or username}!")
+            return redirect('dashboard')  # ← This will now work
+            
+        except Exception as e:
+            messages.error(request, f"Error creating account: {str(e)}")
+            return redirect('register')
+    
     return render(request, 'register.html')
+
+
+@login_required
+def dashboard_view(request):
+    """User dashboard showing their shipments and quotes"""
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    # Get user's shipments
+    shipments = Shipment.objects.filter(user=request.user).order_by('-created_at')[:5]
+    
+    # Get user's quote requests
+    quote_requests = QuoteRequest.objects.filter(user=request.user).order_by('-created_at')[:5]
+    
+    context = {
+        'profile': profile,
+        'shipments': shipments,
+        'quote_requests': quote_requests,
+        'total_shipments': Shipment.objects.filter(user=request.user).count(),
+        'total_quotes': QuoteRequest.objects.filter(user=request.user).count(),
+    }
+
+    return render(request, 'dashboard.html', context)
+
+
+@login_required
+def profile_view(request):
+    """User profile page"""
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        # Update user info
+        request.user.first_name = request.POST.get('first_name', request.user.first_name)
+        request.user.last_name = request.POST.get('last_name', request.user.last_name)
+        request.user.email = request.POST.get('email', request.user.email)
+        request.user.save()
+        
+        # Update profile
+        profile.phone = request.POST.get('phone', profile.phone)
+        profile.company_name = request.POST.get('company_name', profile.company_name)
+        profile.address = request.POST.get('address', profile.address)
+        profile.city = request.POST.get('city', profile.city)
+        profile.country = request.POST.get('country', profile.country)
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    
+    return render(request, 'profile.html', {'profile': profile})

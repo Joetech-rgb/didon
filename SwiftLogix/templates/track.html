@@ -1,278 +1,555 @@
 {% load static %}
+
 <!DOCTYPE html>
+
 <html lang="en">
 
+
+
 <head>
+
     <meta charset="utf-8">
+
     <title>Track Shipment - SwiftLogix</title>
+
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
     <meta content="SwiftLogix shipment tracking, logistics updates, delivery status" name="keywords">
+
     <meta content="Track your SwiftLogix shipment in real-time. View sender, receiver, package details, and live updates." name="description">
 
+
+
     <!-- Favicon -->
+
     <link href="{% static 'logistica-1.0.0/img/favicon.ico' %}" rel="icon">
 
+
+
     <!-- Google Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
 
+
+
     <!-- Icons -->
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
+
+
     <!-- Libraries -->
+
     <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+
     <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
 
+
+
     <!-- Bootstrap & Custom -->
+
     <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
+
     <link href="{% static 'logistica-1.0.0/css/style.css' %}" rel="stylesheet">
 
+
+
     <!-- Leaflet Map -->
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+
+
     <style>
+
         .timeline {
+
             border-left: 3px solid #0d6efd;
+
             margin: 20px 0;
+
             padding-left: 20px;
+
         }
+
         .timeline-item {
+
             margin-bottom: 20px;
+
             position: relative;
+
         }
+
         .timeline-item::before {
+
             content: "";
+
             position: absolute;
+
             left: -11px;
+
             top: 0;
+
             width: 18px;
+
             height: 18px;
+
             border-radius: 50%;
+
             background: #0d6efd;
+
         }
+
     </style>
+
 </head>
 
+
+
 <body>
-    
+
+   
+
     <!-- Navbar Start -->
+
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
+
         <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
+
             <h2 class="mb-2 text-white">SwiftLogix</h2>
+
         </a>
+
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+
             <span class="navbar-toggler-icon"></span>
+
         </button>
+
         <div class="collapse navbar-collapse" id="navbarCollapse">
+
             <div class="navbar-nav ms-auto p-4 p-lg-0">
+
                 <a href="{% url 'home' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+
                 <a href="{% url 'about' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+
                 <a href="{% url 'services' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+
                 <div class="nav-item dropdown">
+
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+
                     <div class="dropdown-menu fade-up m-0">
+
                         <a href="{% url 'pricing' %}" class="dropdown-item">Pricing Plan</a>
+
                         <a href="{% url 'feature' %}" class="dropdown-item">Features</a>
+
                         <a href="{% url 'quote' %}" class="dropdown-item">Free Quote</a>
+
                         <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
+
                         <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
-                        
+
+                       
+
                     </div>
+
                 </div>
+
                 <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
+
             </div>
+
             <!-- Tracking Form -->
+
             <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
+
                 <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
+
                 <button class="btn btn-primary" type="submit">Track</button>
+
             </form>
+
         </div>
+
     </nav>
+
     <!-- Navbar End -->
 
+
+
     <!-- Tracking Results -->
+
     <div class="container py-5">
+
         <div class="row">
+
             <!-- Left side: Shipment details + Tracking updates -->
+
             <div class="col-lg-7">
+
                 <div id="trackingResults">
+
                     {% if error_message %}
+
                         <div class="alert alert-danger">{{ error_message }}</div>
+
                     {% endif %}
+
+
 
                     {% if shipment %}
+
                         <div class="card shadow p-4 mb-4">
+
                             <h4 class="mb-3">Shipment Details</h4>
+
                             <p><strong>Tracking ID:</strong> {{ shipment.tracking_id }}</p>
+
                             <p><strong>Status:</strong> {{ shipment.get_status_display }}</p>
+
                             <p><strong>Sender:</strong> {{ shipment.sender_name }} ({{ shipment.sender_city }}, {{ shipment.sender_country }})</p>
+
                             <p><strong>Receiver:</strong> {{ shipment.receiver_name }} ({{ shipment.receiver_city }}, {{ shipment.receiver_country }})</p>
+
                             <p><strong>Type:</strong> {{ shipment.get_shipment_type_display }}</p>
+
                             <p><strong>Pickup Date:</strong> {{ shipment.pickup_date }}</p>
+
                             <p><strong>Expected Delivery:</strong> {{ shipment.expected_delivery_date }}</p>
+
                             {% if shipment.actual_delivery_date %}
+
                                 <p><strong>Delivered On:</strong> {{ shipment.actual_delivery_date }}</p>
+
                             {% endif %}
+
                             <p><strong>Weight:</strong> {{ shipment.weight }}</p>
+
                             <p><strong>Dimensions:</strong> {{ shipment.dimensions }}</p>
+
                             <p><strong>Description:</strong> {{ shipment.package_description }}</p>
+
                         </div>
 
+
+
                         <div class="card shadow p-4">
+
                             <h4 class="mb-3">Tracking Updates</h4>
+
                             {% if tracking_updates %}
+
                                 <div class="timeline">
+
                                     {% for update in tracking_updates %}
+
                                         <div class="timeline-item">
-                                            <h6>{{ update.get_status_display }} - 
+
+                                            <h6>{{ update.get_status_display }} -
+
                                                 <small>{{ update.timestamp|date:"M d, Y H:i" }}</small>
+
                                             </h6>
+
                                             <p><i class="bi bi-geo-alt"></i> {{ update.location }}</p>
+
                                             <p>{{ update.description }}</p>
+
                                         </div>
+
                                     {% endfor %}
+
                                 </div>
+
                             {% else %}
+
                                 <p>No updates available yet.</p>
+
                             {% endif %}
+
                         </div>
+
                     {% endif %}
+
                 </div>
+
             </div>
+
+
 
             <!-- Right side: Live Map -->
+
             <div class="col-lg-5">
+
                 <div class="card shadow p-3">
+
                     <h4 class="mb-3">Live Map</h4>
+
                     <div id="map" style="height: 500px; width: 100%; border-radius: 10px;"></div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+
 
     <!-- Footer -->
+
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5">
+
         <div class="container py-5">
+
             <div class="row g-5">
+
                 <div class="col-lg-3 col-md-6">
+
                     <h4 class="text-light mb-4">Head Office</h4>
+
                     <p><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
+
                     <p><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
-                    <p><i class="fa fa-envelope me-3"></i>j8001462@gmail.com</p>
+
+                    <p><i class="fa fa-envelope me-3"></i>j800462@gmail.com</p>
+
                 </div>
+
                 <div class="col-lg-3 col-md-6">
+
                     <h4 class="text-light mb-4">Our Services</h4>
+
                     <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+
                     <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+
                     <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+
                     <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+
                     <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+
                     <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
+
                 </div>
+
                 <div class="col-lg-3 col-md-6">
+
                     <h4 class="text-light mb-4">Quick Links</h4>
+
                     <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
+
                     <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
+
                     <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
+
                     <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+
                     <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
+
                 </div>
+
                 <div class="col-lg-3 col-md-6">
+
                     <h4 class="text-light mb-4">Newsletter</h4>
+
                     <p>Subscribe for updates on logistics solutions.</p>
+
                     <div class="position-relative">
+
                         <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+
                         <button type="button" class="btn btn-primary position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
         <div class="container text-center">
+
             <small>&copy; SwiftLogix, All Rights Reserved. Designed by King Eben Tech</small>
+
         </div>
+
     </div>
 
+
+
     <!-- JS -->
+
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
     <script src="{% static 'js/main.js' %}"></script>
 
+
+
     <!-- AJAX + Leaflet Map -->
+
     <script>
+
         let map = L.map('map').setView([5.5560, -0.1969], 5);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
             attribution: '&copy; OpenStreetMap contributors'
+
         }).addTo(map);
 
+
+
         let shipmentMarker = null;
+
         let pathLine = null;
 
+
+
         function updateMap(shipment) {
+
             const sender = [shipment.sender_lat, shipment.sender_lng];
+
             const receiver = [shipment.receiver_lat, shipment.receiver_lng];
+
             const current = [shipment.current_lat, shipment.current_lng];
 
+
+
             if (shipmentMarker) map.removeLayer(shipmentMarker);
+
             if (pathLine) map.removeLayer(pathLine);
 
+
+
             L.marker(sender).addTo(map).bindPopup("Sender: " + shipment.sender_name);
+
             L.marker(receiver).addTo(map).bindPopup("Receiver: " + shipment.receiver_name);
+
             shipmentMarker = L.marker(current).addTo(map).bindPopup("Current Location").openPopup();
 
+
+
             pathLine = L.polyline([sender, current, receiver], { color: 'blue' }).addTo(map);
+
             map.fitBounds(pathLine.getBounds());
+
         }
 
+
+
         document.getElementById('trackForm').addEventListener('submit', function (e) {
+
             e.preventDefault();
+
             const trackingId = document.getElementById('trackingInput').value.trim();
+
             if (!trackingId) { alert("Please enter a tracking ID."); return; }
 
+
+
             fetch(`/track/api/?tracking_number=${trackingId}`)
+
                 .then(res => res.json())
+
                 .then(data => {
+
                     const results = document.getElementById('trackingResults');
+
                     if (!data.success) { results.innerHTML = `<div class="alert alert-danger">${data.error}</div>`; return; }
 
+
+
                     let html = `
+
                         <div class="card shadow p-4 mb-4">
+
                             <h4 class="mb-3">Shipment Details</h4>
+
                             <p><strong>Tracking ID:</strong> ${data.shipment.tracking_number}</p>
+
                             <p><strong>Status:</strong> ${data.shipment.status}</p>
+
                             <p><strong>Sender:</strong> ${data.shipment.sender_name} (${data.shipment.sender_city}, ${data.shipment.sender_country})</p>
+
                             <p><strong>Receiver:</strong> ${data.shipment.receiver_name} (${data.shipment.receiver_city}, ${data.shipment.receiver_country})</p>
+
                             <p><strong>Type:</strong> ${data.shipment.shipment_type}</p>
+
                             <p><strong>Pickup Date:</strong> ${data.shipment.pickup_date}</p>
+
                             <p><strong>Expected Delivery:</strong> ${data.shipment.expected_delivery}</p>
+
                             ${data.shipment.actual_delivery ? `<p><strong>Delivered On:</strong> ${data.shipment.actual_delivery}</p>` : ""}
+
                             <p><strong>Weight:</strong> ${data.shipment.weight}</p>
+
                             <p><strong>Dimensions:</strong> ${data.shipment.dimensions}</p>
+
                             <p><strong>Description:</strong> ${data.shipment.package_description}</p>
+
                         </div>
+
                         <div class="card shadow p-4">
+
                             <h4 class="mb-3">Tracking Updates</h4>
+
                             <div class="timeline">
+
                     `;
+
                     if (data.tracking_updates.length > 0) {
+
                         data.tracking_updates.forEach(update => {
+
                             html += `
+
                                 <div class="timeline-item">
+
                                     <h6>${update.status} - <small>${update.date} ${update.time}</small></h6>
+
                                     <p><i class="bi bi-geo-alt"></i> ${update.location}</p>
+
                                     <p>${update.description}</p>
+
                                 </div>
+
                             `;
+
                         });
+
                     } else { html += `<p>No updates available yet.</p>`; }
+
                     html += `</div></div>`;
+
                     results.innerHTML = html;
 
+
+
                     if (data.shipment.current_lat && data.shipment.current_lng) {
+
                         updateMap(data.shipment);
+
                     }
+
                 })
+
                 .catch(err => console.error(err));
+
         });
+
     </script>
+
 </body>
+
 </html>

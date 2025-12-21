@@ -1,7 +1,22 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User  # NEW: Import User model
 import random
 import string
+
+# NEW: UserProfile Model - Add this at the top
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, blank=True)
+    company_name = models.CharField(max_length=200, blank=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
 
 class Shipment(models.Model):
     SHIPMENT_STATUS_CHOICES = [
@@ -25,6 +40,7 @@ class Shipment(models.Model):
     tracking_number = models.CharField(max_length=20, unique=True, blank=True)
     status = models.CharField(max_length=20, choices=SHIPMENT_STATUS_CHOICES, default='pending')
     shipment_type = models.CharField(max_length=10, choices=SHIPMENT_TYPE_CHOICES)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='shipments')  # NEW: Link to user
 
     # Sender Information
     sender_name = models.CharField(max_length=100)
@@ -147,7 +163,7 @@ class QuoteRequest(models.Model):
         max_length=20, choices=STATUS_CHOICES, default="pending", verbose_name="Status"
     )
 
-    # New Fields (✅ fixed with null/blank allowed)
+    # New Fields
     departure = models.CharField(
         max_length=100, blank=True, null=True, verbose_name="Departure Location"
     )
@@ -157,6 +173,7 @@ class QuoteRequest(models.Model):
     message = models.TextField(
         blank=True, null=True, verbose_name="Additional Message"
     )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='quote_requests')  # NEW: Link to user
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
@@ -170,6 +187,7 @@ class QuoteRequest(models.Model):
     def __str__(self):
         return f"{self.name} - {self.get_freight_type_display()} ({self.status.capitalize()})"
     
+
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()

@@ -57,6 +57,7 @@
             <a href="{% url 'home' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
             <a href="{% url 'about' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
             <a href="{% url 'services' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+            <a href="{% url 'login' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                 <div class="dropdown-menu fade-up m-0">
@@ -66,6 +67,7 @@
                     <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
                     <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
                     <a href="{% url 'page_not_found' %}" class="dropdown-item"></a>
+                    
                 </div>
             </div>
             <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
@@ -520,8 +522,8 @@
                         <div class="overflow-hidden mb-4">
                             <img class="img-fluid" src="{% static 'logistica-1.0.0/img/team-1.jpg' %}" alt="">
                         </div>
-                        <h5 class="mb-0">Full Name</h5>
-                        <p>Designation</p>
+                        <h5 class="mb-0">Ethan	Miller</h5>
+                        <p>America</p>
                         <div class="btn-slide mt-1">
                             <i class="fa fa-share"></i>
                             <span>
@@ -537,8 +539,8 @@
                         <div class="overflow-hidden mb-4">
                             <img class="img-fluid" src="{% static 'logistica-1.0.0/img/team-2.jpg' %}" alt="">
                         </div>
-                        <h5 class="mb-0">Full Name</h5>
-                        <p>Designation</p>
+                        <h5 class="mb-0">Alexander Dubois</h5>
+                        <p>France</p>
                         <div class="btn-slide mt-1">
                             <i class="fa fa-share"></i>
                             <span>
@@ -554,8 +556,8 @@
                         <div class="overflow-hidden mb-4">
                             <img class="img-fluid" src="{% static 'logistica-1.0.0/img/team-3.jpg' %}" alt="">
                         </div>
-                        <h5 class="mb-0">Full Name</h5>
-                        <p>Designation</p>
+                        <h5 class="mb-0">William	Johnson</h5>
+                        <p>Britain</p>
                         <div class="btn-slide mt-1">
                             <i class="fa fa-share"></i>
                             <span>
@@ -571,8 +573,8 @@
                         <div class="overflow-hidden mb-4">
                             <img class="img-fluid" src="{% static 'logistica-1.0.0/img/team-4.jpg' %}" alt="">
                         </div>
-                        <h5 class="mb-0">Full Name</h5>
-                        <p>Designation</p>
+                        <h5 class="mb-0">Benjamin	Scott</h5>
+                        <p>Australia</p>
                         <div class="btn-slide mt-1">
                             <i class="fa fa-share"></i>
                             <span>
@@ -612,17 +614,7 @@
             </div>
 
             <!-- Client 2 -->
-            <div class="testimonial-item p-4 my-5">
-                <i class="fa fa-quote-right fa-3x text-light position-absolute top-0 end-0 mt-n3 me-4"></i>
-                <div class="d-flex align-items-end mb-4">
-                    <img class="img-fluid flex-shrink-0" src="{% static 'logistica-1.0.0/img/testimonial-2.jpg' %}" style="width: 80px; height: 80px;">
-                    <div class="ms-4">
-                        <h5 class="mb-1">Ana Souza</h5>
-                        <p class="m-0">Business Owner, Brazil</p>
-                    </div>
-                </div>
-                <p class="mb-0">Their warehousing and distribution solutions helped my company expand across South America. Excellent customer support too!</p>
-            </div>
+            
 
             <!-- Client 3 -->
             <div class="testimonial-item p-4 my-5">
@@ -638,30 +630,10 @@
             </div>
 
             <!-- Client 4 -->
-            <div class="testimonial-item p-4 my-5">
-                <i class="fa fa-quote-right fa-3x text-light position-absolute top-0 end-0 mt-n3 me-4"></i>
-                <div class="d-flex align-items-end mb-4">
-                    <img class="img-fluid flex-shrink-0" src="{% static 'logistica-1.0.0/img/testimonial-4.jpg' %}" style="width: 80px; height: 80px;">
-                    <div class="ms-4">
-                        <h5 class="mb-1">Sophie Martin</h5>
-                        <p class="m-0">E-commerce Founder, Canada</p>
-                    </div>
-                </div>
-                <p class="mb-0">We ship hundreds of products every week, and SwiftLogix ensures smooth delivery to our customers worldwide. Highly recommended!</p>
-            </div>
+            
 
             <!-- Client 5 -->
-            <div class="testimonial-item p-4 my-5">
-                <i class="fa fa-quote-right fa-3x text-light position-absolute top-0 end-0 mt-n3 me-4"></i>
-                <div class="d-flex align-items-end mb-4">
-                    <img class="img-fluid flex-shrink-0" src="{% static 'logistica-1.0.0/img/testimonial-1.jpg' %}" style="width: 80px; height: 80px;">
-                    <div class="ms-4">
-                        <h5 class="mb-1">James Anderson</h5>
-                        <p class="m-0">Export Consultant, Australia</p>
-                    </div>
-                </div>
-                <p class="mb-0">Their sea freight solutions are cost-effective and dependable. SwiftLogix is our go-to logistics partner for overseas shipments.</p>
-            </div>
+           
 
         </div>
     </div>
@@ -677,7 +649,7 @@
                     <h4 class="text-light mb-4">Head Office</h4>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j8001462@gmail.com</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j800462@gmail.com</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>

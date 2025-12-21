@@ -1,11 +1,33 @@
 from django.contrib import admin
-
-from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import Shipment, TrackingUpdate, QuoteRequest
-from django.contrib import admin
-from .models import ContactMessage
+from .models import Shipment, TrackingUpdate, QuoteRequest, ContactMessage, UserProfile
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'phone', 'company_name', 'city', 'country', 'created_at']
+    search_fields = ['user__username', 'user__email', 'company_name', 'phone']
+    list_filter = ['country', 'city', 'created_at']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user',)
+        }),
+        ('Contact Details', {
+            'fields': ('phone', 'company_name')
+        }),
+        ('Address', {
+            'fields': ('address', 'city', 'country')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        })
+    )
+    
+    readonly_fields = ('created_at',)
 
 
 @admin.register(Shipment)
@@ -14,6 +36,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         'tracking_number',
         'sender_name',
         'receiver_name',
+        'user',  # Added user field
         'status_badge',
         'shipment_type',
         'created_at',
@@ -32,14 +55,15 @@ class ShipmentAdmin(admin.ModelAdmin):
         'sender_name',
         'receiver_name',
         'sender_email',
-        'receiver_email'
+        'receiver_email',
+        'user__username'  # Added user search
     ]
     ordering = ['-created_at']
     date_hierarchy = 'created_at'
 
     fieldsets = (
         ('Tracking Information', {
-            'fields': ('tracking_number', 'status', 'shipment_type')
+            'fields': ('tracking_number', 'status', 'shipment_type', 'user')  # Added user
         }),
         ('Sender Information', {
             'fields': (
@@ -69,7 +93,6 @@ class ShipmentAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = ('created_at', 'updated_at')
-
 
     def status_badge(self, obj):
         """Display status with color-coded badge"""
@@ -121,6 +144,7 @@ class QuoteRequestAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "email",
+        "user",  # Added user field
         "freight_type",
         "departure",
         "delivery",
@@ -128,11 +152,14 @@ class QuoteRequestAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("freight_type", "status", "created_at")
-    search_fields = ("name", "email", "departure", "delivery")
+    search_fields = ("name", "email", "departure", "delivery", "user__username")  # Added user search
     ordering = ("-created_at",)
     date_hierarchy = "created_at"
 
     fieldsets = (
+        ("User Information", {
+            "fields": ("user",),
+        }),
         ("Contact Information", {
             "fields": ("name", "email", "mobile"),
         }),
@@ -181,6 +208,7 @@ class QuoteRequestAdmin(admin.ModelAdmin):
         updated = queryset.update(status="processing")
         self.message_user(request, f"{updated} quote requests marked as processing.")
     mark_as_processing.short_description = "Mark selected requests as processing"
+
 
 @admin.register(ContactMessage)
 class ContactMessageAdmin(admin.ModelAdmin):

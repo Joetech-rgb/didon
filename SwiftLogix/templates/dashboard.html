@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - SwiftLogix</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="{% static 'logistica-1.0.0/img/favicon.ico' %}" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'logistica-1.0.0/css/style.css' %}">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
+        <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
+            <h2 class="mb-2 text-white">SwiftLogix</h2>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="{% url 'home' %}" class="nav-item nav-link">Home</a>
+                <a href="{% url 'dashboard' %}" class="nav-item nav-link active">Dashboard</a>
+                <a href="{% url 'profile' %}" class="nav-item nav-link">Profile</a>
+                <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Page Header Start -->
+    <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url({% static 'logistica-1.0.0/img/carousel-1.jpg' %}); background-size: cover;">
+        <div class="container py-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Welcome, {{ user.first_name|default:user.username }}!</h1>
+            <p class="text-white">Manage your shipments and track your orders</p>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <div class="container-xxl py-5">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-light rounded p-4 text-center">
+                        <i class="fa fa-box fa-3x text-primary mb-3"></i>
+                        <h3 class="mb-2">{{ total_shipments }}</h3>
+                        <p class="mb-0">Total Shipments</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="bg-light rounded p-4 text-center">
+                        <i class="fa fa-file-invoice fa-3x text-primary mb-3"></i>
+                        <h3 class="mb-2">{{ total_quotes }}</h3>
+                        <p class="mb-0">Quote Requests</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="bg-light rounded p-4 text-center">
+                        <i class="fa fa-user fa-3x text-primary mb-3"></i>
+                        <h3 class="mb-2">{{ user.username }}</h3>
+                        <p class="mb-0">Account Active</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4 mb-5">
+                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-light rounded p-5">
+                        <h3 class="mb-4">Quick Actions</h3>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="{% url 'quote' %}" class="btn btn-primary w-100 py-3">
+                                    <i class="fa fa-file-invoice me-2"></i>Request Quote
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{% url 'track' %}" class="btn btn-primary w-100 py-3">
+                                    <i class="fa fa-search me-2"></i>Track Shipment
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{% url 'contact' %}" class="btn btn-primary w-100 py-3">
+                                    <i class="fa fa-phone me-2"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Shipments -->
+            <div class="row g-4 mb-5">
+                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-light rounded p-5">
+                        <h3 class="mb-4">Recent Shipments</h3>
+                        {% if shipments %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tracking Number</th>
+                                            <th>Status</th>
+                                            <th>From → To</th>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for shipment in shipments %}
+                                        <tr>
+                                            <td><strong>{{ shipment.tracking_number }}</strong></td>
+                                            <td>
+                                                <span class="badge bg-primary">{{ shipment.get_status_display }}</span>
+                                            </td>
+                                            <td>{{ shipment.sender_city }} → {{ shipment.receiver_city }}</td>
+                                            <td>{{ shipment.get_shipment_type_display }}</td>
+                                            <td>{{ shipment.created_at|date:"M d, Y" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No shipments yet. <a href="{% url 'quote' %}">Request a quote</a> to get started!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Quote Requests -->
+            <div class="row g-4">
+                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-light rounded p-5">
+                        <h3 class="mb-4">Recent Quote Requests</h3>
+                        {% if quote_requests %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Freight Type</th>
+                                            <th>Origin → Destination</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for quote in quote_requests %}
+                                        <tr>
+                                            <td>{{ quote.get_freight_type_display }}</td>
+                                            <td>{{ quote.origin }} → {{ quote.destination }}</td>
+                                            <td>
+                                                <span class="badge bg-warning text-dark">{{ quote.get_status_display }}</span>
+                                            </td>
+                                            <td>{{ quote.created_at|date:"M d, Y" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No quote requests yet. <a href="{% url 'quote' %}">Request your first quote</a>!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 6rem;">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Head Office</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j8001462@gmail.com</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Quick Links</h4>
+                    <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
+                    <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
+                    <a class="btn btn-link" href="{% url 'services' %}">Services</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">SwiftLogix</a>, All Rights Reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        Designed by <a class="border-bottom" href="#">King Eben Tech</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top">
+        <i class="bi bi-arrow-up"></i>
+    </a>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'logistica-1.0.0/lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/counterup/counterup.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/js/main.js' %}"></script>
+</body>
+</html>
+<style>
+    /* Animated floating background circles */
+    .animated-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .animated-bg span {
+        position: absolute;
+        display: block;
+        width: 80px;
+        height: 80px;
+        background: rgba(108, 99, 255, 0.2);
+        border-radius: 50%;
+        animation: float 6s infinite;
+        bottom: -50px;
+    }
+    .animated-bg span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .animated-bg span:nth-child(2) { left: 30%; animation-delay: 2s; }
+    .animated-bg span:nth-child(3) { left: 50%; animation-delay: 4s; }
+    .animated-bg span:nth-child(4) { left: 70%; animation-delay: 1s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
