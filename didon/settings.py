@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # [NEW] Django Crispy Forms for better form rendering (optional but common)
     # 'crispy_forms', 
     # 'crispy_bootstrap5',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -147,9 +148,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # (This is a common temporary solution before moving to a dedicated CDN/S3)
 STORAGES = {
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+WHITENOISE_MANIFEST_STRICT = False
 
 # Default primary key field type... (No change needed here)
 
@@ -171,3 +174,18 @@ LOGOUT_REDIRECT_URL = 'home'
 # EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 # EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 # EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# =========================
+# PRODUCTION SECURITY
+# =========================
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Only enable this if your site is served over HTTPS (most platforms do)
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
