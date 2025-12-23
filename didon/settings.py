@@ -96,10 +96,15 @@ DATABASES = {
             'DATABASE_URL',
             default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
         ),
-        conn_max_age=600,
-        ssl_require=not DEBUG
+        conn_max_age=600
     )
 }
+
+# Only add SSL requirement for PostgreSQL (production)
+if 'postgres' in DATABASES['default']['ENGINE']:
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require' if not DEBUG else 'prefer'
+    }
 
 # ==================================================
 # PASSWORD VALIDATION
