@@ -15,14 +15,22 @@
     <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'logistica-1.0.0/css/style.css' %}">
     <style>
-        /* Custom styles to match the dashboard look and feel */
         .profile-card {
-            background-color: #f8f9fa; /* Light background like the dashboard cards */
+            background-color: #f8f9fa;
             border-radius: 0.5rem;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
         .form-group label {
             font-weight: 500;
+        }
+        .profile-card input[type="text"],
+        .profile-card input[type="email"],
+        .profile-card textarea,
+        .profile-card select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
         }
     </style>
 </head>
@@ -43,12 +51,14 @@
             </div>
         </div>
     </nav>
+
     <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url({% static 'logistica-1.0.0/img/carousel-1.jpg' %}); background-size: cover;">
         <div class="container py-5">
             <h1 class="display-3 text-white mb-3 animated slideInDown">Account Profile</h1>
             <p class="text-white">View and update your personal and security details</p>
         </div>
     </div>
+
     <div class="container-xxl py-5">
         <div class="container">
             {% if messages %}
@@ -64,7 +74,7 @@
                 <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="profile-card p-5">
                         <h3 class="mb-4 text-primary">Personal Details</h3>
-                        <p class="text-muted mb-4">You are logged in as **{{ user.username }}**.</p>
+                        <p class="text-muted mb-4">You are logged in as <strong>{{ user.username }}</strong>.</p>
                         
                         <form method="post" action="{% url 'profile' %}">
                             {% csrf_token %}
@@ -106,11 +116,10 @@
                     <div class="profile-card p-4">
                         <h4 class="mb-3 text-danger">Security Actions</h4>
                         <div class="list-group">
-                            
                             <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
                                 <i class="fa fa-sign-out-alt me-2"></i>Log Out
                             </a>
-                            </div>
+                        </div>
                         <div class="mt-4 p-3 border rounded text-center">
                             <i class="fa fa-info-circle text-primary mb-2"></i>
                             <p class="small mb-0">Changes here are reflected across your dashboard and services.</p>
@@ -151,6 +160,7 @@
             </div>
         </div>
     </div>
+
     <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top">
         <i class="bi bi-arrow-up"></i>
     </a>
