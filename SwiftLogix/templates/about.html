@@ -324,8 +324,8 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Head Office</h4>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 55 317 1423</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>j800462@gmail.com</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233558981132</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>contactswiftlogix@gmail.com</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
@@ -335,21 +335,22 @@
                 </div>
                 <!-- Services -->
                 <div class="col-lg-3 col-md-6">
-                    <h4 class="text-light mb-4">Our Services</h4>
-                    <a class="btn btn-link" href="#">Air Freight</a>
-                    <a class="btn btn-link" href="#">Sea Freight</a>
-                    <a class="btn btn-link" href="#">Road Transport</a>
-                    <a class="btn btn-link" href="#">Warehousing</a>
-                    <a class="btn btn-link" href="#">Customs Clearance</a>
+                  
+                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
+                </div>
                 </div>
                 <!-- Quick Links -->
                 <div class="col-lg-3 col-md-6">
-                    <h4 class="text-light mb-4">Quick Links</h4>
                     <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
                     <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
                     <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
-                    <a class="btn btn-link" href="#">Terms & Conditions</a>
-                    <a class="btn btn-link" href="#">Help & Support</a>
+                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
                 </div>
                 <!-- Newsletter -->
                 <div class="col-lg-3 col-md-6">
