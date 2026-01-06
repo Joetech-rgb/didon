@@ -36,7 +36,7 @@
     <!-- Navbar End -->
 
     <!-- Page Header Start -->
-    <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url({% static 'logistica-1.0.0/img/carousel-1.jpg' %}); background-size: cover;">
+    <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url('{% static 'logistica-1.0.0/img/carousel-1.jpg' %}'); background-size: cover;"></div>
         <div class="container py-5">
             <h1 class="display-3 text-white mb-3 animated slideInDown">Welcome, {{ user.first_name|default:user.username }}!</h1>
             <p class="text-white">Manage your shipments and track your orders</p>
@@ -191,7 +191,7 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Head Office</h4>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233558981132</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i></p>
                     <p class="mb-2"><i class="fa fa-envelope me-3"></i>contactswiftlogix@gmail.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6">
