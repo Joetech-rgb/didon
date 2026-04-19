@@ -821,7 +821,8 @@
                             <!-- Status row -->
                             <div style="margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
                                 <span class="fw-bold" style="font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Status</span>
-                                <span class="status-badge in-transit">
+                                <!-- FIX 3: Dynamic status badge class based on actual status -->
+                                <span class="status-badge {% if shipment.status == 'delivered' %}delivered{% elif shipment.status == 'in_transit' or shipment.status == 'out_for_delivery' or shipment.status == 'picked_up' %}in-transit{% else %}pending{% endif %}">
                                     <span class="status-dot"></span>
                                     {{ shipment.get_status_display }}
                                 </span>
@@ -849,7 +850,8 @@
                             <div class="detail-grid">
                                 <div class="detail-item">
                                     <div class="label">Tracking ID</div>
-                                    <div class="value" style="font-family:'Syne',sans-serif; color:var(--primary);">{{ shipment.tracking_id }}</div>
+                                    <!-- FIX 1: Changed tracking_id → tracking_number -->
+                                    <div class="value" style="font-family:'Syne',sans-serif; color:var(--primary);">{{ shipment.tracking_number }}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Type</div>
@@ -865,21 +867,24 @@
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Pickup Date</div>
-                                    <div class="value">{{ shipment.pickup_date }}</div>
+                                    <!-- FIX 2: Formatted date with fallback -->
+                                    <div class="value">{{ shipment.pickup_date|date:"F d, Y, g:i a"|default:"Not Set" }}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Expected Delivery</div>
-                                    <div class="value">{{ shipment.expected_delivery_date }}</div>
+                                    <!-- FIX 2: Formatted date with fallback -->
+                                    <div class="value">{{ shipment.expected_delivery_date|date:"F d, Y, g:i a"|default:"Not Set" }}</div>
                                 </div>
                                 {% if shipment.actual_delivery_date %}
                                 <div class="detail-item">
                                     <div class="label">Delivered On</div>
-                                    <div class="value" style="color:var(--success);">{{ shipment.actual_delivery_date }}</div>
+                                    <!-- FIX 2: Formatted date -->
+                                    <div class="value" style="color:var(--success);">{{ shipment.actual_delivery_date|date:"F d, Y, g:i a" }}</div>
                                 </div>
                                 {% endif %}
                                 <div class="detail-item">
                                     <div class="label">Weight</div>
-                                    <div class="value">{{ shipment.weight }}</div>
+                                    <div class="value">{{ shipment.weight }} kg</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Dimensions</div>
@@ -1113,7 +1118,6 @@
     async function buildMap(shipmentData) {
         clearMap();
 
-        // Try to get coords from API data first; fall back to geocoding
         let senderCoords  = shipmentData.sender_lat  && shipmentData.sender_lng
             ? [parseFloat(shipmentData.sender_lat),   parseFloat(shipmentData.sender_lng)]
             : await geocode(shipmentData.sender_city,   shipmentData.sender_country);
@@ -1124,7 +1128,7 @@
 
         let currentCoords  = shipmentData.current_lat && shipmentData.current_lng
             ? [parseFloat(shipmentData.current_lat),  parseFloat(shipmentData.current_lng)]
-            : senderCoords; // fallback
+            : senderCoords;
 
         if (!senderCoords || !receiverCoords) return;
 
@@ -1150,23 +1154,22 @@
 
         map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
-        // Footer update
         const now = new Date();
         const ts = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         updateMapFooter(shipmentData.current_city || shipmentData.sender_city, ts);
     }
 
-    // ── On page load: if Django rendered shipment, use AJAX to get coords ──
+    // ── On page load: use tracking_number (FIX 1) ──────
     {% if shipment %}
     (async () => {
-        const trackingId = "{{ shipment.tracking_id }}";
+        // FIX 1: Changed tracking_id → tracking_number
+        const trackingNumber = "{{ shipment.tracking_number }}";
         try {
-            const res = await fetch(`/track/api/?tracking_number=${trackingId}`);
+            const res = await fetch(`/track/api/?tracking_number=${trackingNumber}`);
             const data = await res.json();
             if (data.success && data.shipment) {
                 await buildMap(data.shipment);
             } else {
-                // Fallback: geocode from template variables
                 await buildMap({
                     sender_name:     "{{ shipment.sender_name|escapejs }}",
                     sender_city:     "{{ shipment.sender_city|escapejs }}",
@@ -1177,7 +1180,6 @@
                 });
             }
         } catch(e) {
-            // Fallback geocode
             await buildMap({
                 sender_name:     "{{ shipment.sender_name|escapejs }}",
                 sender_city:     "{{ shipment.sender_city|escapejs }}",
@@ -1190,7 +1192,7 @@
     })();
     {% endif %}
 
-    // Auto-refresh map every 60 seconds if tracking_id in URL
+    // Auto-refresh map every 60 seconds
     const urlTrackId = new URLSearchParams(window.location.search).get('tracking_number');
     if (urlTrackId) {
         setInterval(async () => {
