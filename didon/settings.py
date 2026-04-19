@@ -87,7 +87,7 @@ TEMPLATES = [
 ]
 
 # ==================================================
-# DATABASE
+# DATABASE — PostgreSQL on Render, SQLite locally
 # ==================================================
 
 DATABASES = {
@@ -96,15 +96,15 @@ DATABASES = {
             'DATABASE_URL',
             default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
         ),
-        conn_max_age=600
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
-# Only add SSL requirement for PostgreSQL (production)
-if 'postgres' in DATABASES['default']['ENGINE']:
-    DATABASES['default']['OPTIONS'] = {
-        'sslmode': 'require' if not DEBUG else 'prefer'
-    }
+# SSL only for PostgreSQL in production
+if 'postgresql' in DATABASES['default'].get('ENGINE', ''):
+    DATABASES['default'].setdefault('OPTIONS', {})
+    DATABASES['default']['OPTIONS']['sslmode'] = 'require' if not DEBUG else 'prefer'
 
 # ==================================================
 # PASSWORD VALIDATION
@@ -171,9 +171,11 @@ SECURE_SSL_REDIRECT = not DEBUG
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.onrender.com",
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://*.onrender.com',
+    cast=Csv()
+)
 
 # ==================================================
 # EMAIL (OPTIONAL – CONFIGURE LATER)
