@@ -1,555 +1,1177 @@
 {% load static %}
-
 <!DOCTYPE html>
-
 <html lang="en">
-
-
-
 <head>
-
     <meta charset="utf-8">
-
-    <title>Track Shipment - SwiftLogix</title>
-
+    <title>Track Shipment — SwiftLogix</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
     <meta content="SwiftLogix shipment tracking, logistics updates, delivery status" name="keywords">
-
-    <meta content="Track your SwiftLogix shipment in real-time. View sender, receiver, package details, and live updates." name="description">
-
-
-
-    <!-- Favicon -->
+    <meta content="Track your SwiftLogix shipment in real-time." name="description">
 
     <link href="{% static 'logistica-1.0.0/img/favicon.ico' %}" rel="icon">
 
-
-
-    <!-- Google Fonts -->
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
-
-
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
     <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-
-
-    <!-- Libraries -->
-
-    <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
-
-    <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
-
-
-
-    <!-- Bootstrap & Custom -->
-
+    <!-- Bootstrap -->
     <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
 
-    <link href="{% static 'logistica-1.0.0/css/style.css' %}" rel="stylesheet">
-
-
-
-    <!-- Leaflet Map -->
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-
-
     <style>
-
-        .timeline {
-
-            border-left: 3px solid #0d6efd;
-
-            margin: 20px 0;
-
-            padding-left: 20px;
-
+        :root {
+            --primary: #FF3E41;
+            --primary-dark: #d92d30;
+            --primary-glow: rgba(255,62,65,0.13);
+            --secondary: #51CFED;
+            --secondary-glow: rgba(81,207,237,0.15);
+            --bg: #F8F2F0;
+            --surface: #ffffff;
+            --surface-2: #fdf8f7;
+            --border: #ecdcd9;
+            --text: #060315;
+            --muted: #6b5f5f;
+            --success: #17b26a;
+            --warning: #f79009;
+            --timeline-line: #f5c4c5;
+            --dark: #060315;
         }
 
-        .timeline-item {
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-            margin-bottom: 20px;
-
-            position: relative;
-
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        .timeline-item::before {
-
-            content: "";
-
-            position: absolute;
-
-            left: -11px;
-
+        /* ── NAVBAR ────────────────────────────────── */
+        .navbar {
+            background: var(--surface) !important;
+            border-top: 4px solid var(--primary) !important;
+            padding: 0 !important;
+            box-shadow: 0 2px 20px rgba(255,62,65,0.08);
+            position: sticky;
             top: 0;
-
-            width: 18px;
-
-            height: 18px;
-
-            border-radius: 50%;
-
-            background: #0d6efd;
-
+            z-index: 1000;
         }
 
+        .navbar-brand {
+            background: var(--primary);
+            padding: 0 2rem;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+            padding-right: 3rem;
+            text-decoration: none;
+        }
+
+        .navbar-brand h2 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .navbar-nav .nav-link {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--muted) !important;
+            padding: 0.5rem 1rem !important;
+            letter-spacing: 0.01em;
+            transition: color 0.2s;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link.active {
+            position: relative;
+        }
+
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(255,62,65,0.08);
+            border-radius: 10px;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            font-size: 0.85rem;
+            border-radius: 6px;
+            padding: 0.5rem 0.85rem;
+            color: var(--text);
+        }
+
+        .dropdown-item:hover { background: var(--primary-glow); color: var(--primary); }
+
+        .nav-track-form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .nav-track-form input {
+            height: 38px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 0 0.9rem;
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface-2);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+            min-width: 190px;
+        }
+
+        .nav-track-form input:focus { border-color: var(--primary); }
+
+        .nav-track-form button {
+            height: 38px;
+            padding: 0 1.1rem;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .nav-track-form button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* ── HERO STRIP ────────────────────────────── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #8a0d0f 100%);
+            padding: 3.5rem 0 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .page-hero .container { position: relative; }
+
+        .page-hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 0.9rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: #fff;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.4rem;
+        }
+
+        .page-hero p {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.95rem;
+            max-width: 440px;
+        }
+
+        /* ── BREADCRUMB ────────────────────────────── */
+        .breadcrumb-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.7rem 0;
+        }
+
+        .breadcrumb {
+            margin: 0;
+            font-size: 0.8rem;
+        }
+
+        .breadcrumb-item a { color: var(--primary); text-decoration: none; }
+        .breadcrumb-item.active { color: var(--muted); }
+
+        /* ── MAIN CONTENT ──────────────────────────── */
+        .main-content {
+            padding: 2.5rem 0 4rem;
+        }
+
+        /* ── CARDS ─────────────────────────────────── */
+        .sl-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.06);
+            margin-bottom: 1.25rem;
+            animation: fadeUp 0.45s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .sl-card:nth-child(2) { animation-delay: 0.1s; }
+        .sl-card:nth-child(3) { animation-delay: 0.2s; }
+
+        .sl-card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sl-card-title .icon-badge {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-glow);
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* ── STATUS BADGE ──────────────────────────── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .status-badge.delivered  { background: rgba(23,178,106,0.12); color: var(--success); }
+        .status-badge.in-transit { background: var(--secondary-glow); color: #1a8fa8; }
+        .status-badge.pending    { background: rgba(247,144,9,0.12);  color: var(--warning); }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.6; transform: scale(1.4); }
+        }
+
+        /* ── DETAIL GRID ───────────────────────────── */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .detail-item {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 0.95rem;
+        }
+
+        .detail-item .label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-item .value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .detail-item.full { grid-column: span 2; }
+
+        /* ── ROUTE STRIP ───────────────────────────── */
+        .route-strip {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .route-city {
+            flex: 1;
+        }
+
+        .route-city .city-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .route-city .city-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .route-city .city-country {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .route-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .route-arrow .arrow-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary) 0%, rgba(255,62,65,0.25) 100%);
+            position: relative;
+        }
+
+        .route-arrow .arrow-line::after {
+            content: '▶';
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            font-size: 10px;
+            color: var(--primary);
+        }
+
+        .route-icon {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* ── TIMELINE ──────────────────────────────── */
+        .timeline { position: relative; padding-left: 0; }
+
+        .tl-item {
+            display: flex;
+            gap: 1.1rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .tl-item:last-child { padding-bottom: 0; }
+
+        .tl-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .tl-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tl-dot.latest {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .tl-line {
+            flex: 1;
+            width: 2px;
+            background: var(--timeline-line);
+            margin-top: 4px;
+        }
+
+        .tl-body { flex: 1; padding-top: 0.25rem; }
+
+        .tl-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tl-status {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .tl-time {
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.55rem;
+            border-radius: 20px;
+        }
+
+        .tl-location {
+            font-size: 0.82rem;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .tl-desc {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ── MAP CARD ──────────────────────────────── */
+        .map-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.07);
+            position: sticky;
+            top: 90px;
+            animation: fadeUp 0.45s ease both;
+        }
+
+        .map-header {
+            padding: 1.1rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+        }
+
+        .map-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            animation: pulse 1.6s infinite;
+        }
+
+        .live-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #1a8fa8;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--secondary-glow);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        #map {
+            height: 420px;
+            width: 100%;
+        }
+
+        .map-footer {
+            padding: 0.85rem 1.4rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1.5rem;
+            background: var(--surface-2);
+        }
+
+        .map-stat { font-size: 0.78rem; color: var(--muted); }
+        .map-stat strong { display: block; font-size: 0.88rem; color: var(--text); }
+
+        /* ── ALERT ─────────────────────────────────── */
+        .sl-alert {
+            background: #fff1f0;
+            border: 1px solid #ffd5d2;
+            color: #b91c1c;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* ── FOOTER ────────────────────────────────── */
+        .footer {
+            background: linear-gradient(rgba(6, 3, 21, .92), rgba(6, 3, 21, .96));
+            color: rgba(255,255,255,0.65);
+            padding: 4rem 0 1.5rem;
+        }
+
+        .footer-brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .footer-tagline {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 1.5rem;
+            max-width: 260px;
+            line-height: 1.6;
+        }
+
+        .footer h5 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 1.1rem;
+        }
+
+        .footer-links { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--secondary); }
+
+        .footer-contact p {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            margin-bottom: 0.6rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .footer-contact i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 0.55rem 0.9rem;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .newsletter-form input::placeholder { color: rgba(255,255,255,0.35); }
+
+        .newsletter-form button {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.55rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .newsletter-form button:hover { background: var(--primary-dark); }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .footer-socials { display: flex; gap: 0.6rem; }
+
+        .footer-socials a {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .footer-socials a:hover { border-color: var(--secondary); color: var(--secondary); }
+
+        /* ── LEAFLET OVERRIDES ─────────────────────── */
+        .leaflet-popup-content-wrapper {
+            border-radius: 10px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 0.82rem !important;
+        }
+
+        /* ── RESPONSIVE ────────────────────────────── */
+        @media (max-width: 991px) {
+            .navbar-brand { clip-path: none; padding-right: 1.5rem; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .detail-item.full { grid-column: span 1; }
+            .map-card { position: static; margin-top: 1.25rem; }
+            #map { height: 320px; }
+        }
+
+        @media (max-width: 575px) {
+            .route-arrow .arrow-line { width: 32px; }
+        }
     </style>
-
 </head>
-
-
 
 <body>
 
-   
-
-    <!-- Navbar Start -->
-
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
-
-        <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
-
-            <h2 class="mb-2 text-white">SwiftLogix</h2>
-
+    <!-- ── NAVBAR ──────────────────────────────────── -->
+    <nav class="navbar navbar-expand-lg">
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <h2>SwiftLogix</h2>
         </a>
-
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-
-            <span class="navbar-toggler-icon"></span>
-
+        <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" style="border:1px solid var(--border); border-radius:8px; padding:0.35rem 0.6rem; background:none;">
+            <i class="bi bi-list" style="font-size:1.3rem; color:var(--muted);"></i>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarCollapse">
-
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-
-                <a href="{% url 'home' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-
-                <a href="{% url 'about' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
-
+            <div class="navbar-nav ms-auto p-4 p-lg-0 align-items-lg-center">
+                <a href="{% url 'home' %}"     class="nav-item nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                <a href="{% url 'about' %}"    class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
                 <a href="{% url 'services' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
-
                 <div class="nav-item dropdown">
-
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-
                     <div class="dropdown-menu fade-up m-0">
-
-                        <a href="{% url 'pricing' %}" class="dropdown-item">Pricing Plan</a>
-
-                        <a href="{% url 'feature' %}" class="dropdown-item">Features</a>
-
-                        <a href="{% url 'quote' %}" class="dropdown-item">Free Quote</a>
-
-                        <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
-
+                        <a href="{% url 'pricing' %}"     class="dropdown-item">Pricing Plan</a>
+                        <a href="{% url 'feature' %}"     class="dropdown-item">Features</a>
+                        <a href="{% url 'quote' %}"       class="dropdown-item">Free Quote</a>
+                        <a href="{% url 'team' %}"        class="dropdown-item">Our Team</a>
                         <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
-
-                       
-
                     </div>
-
                 </div>
-
                 <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
-
             </div>
-
-            <!-- Tracking Form -->
-
-            <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
-
-                <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
-
-                <button class="btn btn-primary" type="submit">Track</button>
-
+            <!-- Tracking Form in Navbar -->
+            <form class="nav-track-form" method="get" action="{% url 'track' %}">
+                <input type="text" name="tracking_number" placeholder="Enter Tracking ID" value="{{ request.GET.tracking_number|default:'' }}">
+                <button type="submit"><i class="bi bi-search me-1"></i> Track</button>
             </form>
-
         </div>
-
     </nav>
 
-    <!-- Navbar End -->
+    <!-- ── PAGE HERO ───────────────────────────────── -->
+    <div class="page-hero">
+        <div class="container">
+            <div class="page-hero-label">
+                <i class="bi bi-radar"></i> Real-Time Tracking
+            </div>
+            <h1>Track Your Shipment</h1>
+            <p>Live updates on your package's journey from sender to receiver, mapped in real time.</p>
+        </div>
+    </div>
 
+    <!-- ── BREADCRUMB ──────────────────────────────── -->
+    <div class="breadcrumb-bar">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Track Shipment</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
+    <!-- ── MAIN ────────────────────────────────────── -->
+    <div class="container main-content">
+        <div class="row g-4 align-items-start">
 
-    <!-- Tracking Results -->
-
-    <div class="container py-5">
-
-        <div class="row">
-
-            <!-- Left side: Shipment details + Tracking updates -->
-
+            <!-- LEFT: Shipment details + Timeline -->
             <div class="col-lg-7">
-
                 <div id="trackingResults">
 
                     {% if error_message %}
-
-                        <div class="alert alert-danger">{{ error_message }}</div>
-
+                        <div class="sl-alert">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            {{ error_message }}
+                        </div>
                     {% endif %}
-
-
 
                     {% if shipment %}
 
-                        <div class="card shadow p-4 mb-4">
+                        <!-- Status + Route -->
+                        <div class="sl-card">
+                            <div class="sl-card-title">
+                                <span class="icon-badge"><i class="bi bi-box-seam"></i></span>
+                                Shipment Overview
+                            </div>
 
-                            <h4 class="mb-3">Shipment Details</h4>
+                            <!-- Status row -->
+                            <div style="margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                                <span class="fw-bold" style="font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Status</span>
+                                <span class="status-badge in-transit">
+                                    <span class="status-dot"></span>
+                                    {{ shipment.get_status_display }}
+                                </span>
+                            </div>
 
-                            <p><strong>Tracking ID:</strong> {{ shipment.tracking_id }}</p>
+                            <!-- Route strip -->
+                            <div class="route-strip">
+                                <div class="route-city">
+                                    <div class="city-label">From</div>
+                                    <div class="city-name">{{ shipment.sender_city }}</div>
+                                    <div class="city-country">{{ shipment.sender_country }}</div>
+                                </div>
+                                <div class="route-arrow">
+                                    <i class="bi bi-truck route-icon"></i>
+                                    <div class="arrow-line"></div>
+                                </div>
+                                <div class="route-city" style="text-align:right;">
+                                    <div class="city-label">To</div>
+                                    <div class="city-name">{{ shipment.receiver_city }}</div>
+                                    <div class="city-country">{{ shipment.receiver_country }}</div>
+                                </div>
+                            </div>
 
-                            <p><strong>Status:</strong> {{ shipment.get_status_display }}</p>
-
-                            <p><strong>Sender:</strong> {{ shipment.sender_name }} ({{ shipment.sender_city }}, {{ shipment.sender_country }})</p>
-
-                            <p><strong>Receiver:</strong> {{ shipment.receiver_name }} ({{ shipment.receiver_city }}, {{ shipment.receiver_country }})</p>
-
-                            <p><strong>Type:</strong> {{ shipment.get_shipment_type_display }}</p>
-
-                            <p><strong>Pickup Date:</strong> {{ shipment.pickup_date }}</p>
-
-                            <p><strong>Expected Delivery:</strong> {{ shipment.expected_delivery_date }}</p>
-
-                            {% if shipment.actual_delivery_date %}
-
-                                <p><strong>Delivered On:</strong> {{ shipment.actual_delivery_date }}</p>
-
-                            {% endif %}
-
-                            <p><strong>Weight:</strong> {{ shipment.weight }}</p>
-
-                            <p><strong>Dimensions:</strong> {{ shipment.dimensions }}</p>
-
-                            <p><strong>Description:</strong> {{ shipment.package_description }}</p>
-
+                            <!-- Detail grid -->
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <div class="label">Tracking ID</div>
+                                    <div class="value" style="font-family:'Syne',sans-serif; color:var(--primary);">{{ shipment.tracking_id }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Type</div>
+                                    <div class="value">{{ shipment.get_shipment_type_display }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Sender</div>
+                                    <div class="value">{{ shipment.sender_name }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Receiver</div>
+                                    <div class="value">{{ shipment.receiver_name }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Pickup Date</div>
+                                    <div class="value">{{ shipment.pickup_date }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Expected Delivery</div>
+                                    <div class="value">{{ shipment.expected_delivery_date }}</div>
+                                </div>
+                                {% if shipment.actual_delivery_date %}
+                                <div class="detail-item">
+                                    <div class="label">Delivered On</div>
+                                    <div class="value" style="color:var(--success);">{{ shipment.actual_delivery_date }}</div>
+                                </div>
+                                {% endif %}
+                                <div class="detail-item">
+                                    <div class="label">Weight</div>
+                                    <div class="value">{{ shipment.weight }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Dimensions</div>
+                                    <div class="value">{{ shipment.dimensions }}</div>
+                                </div>
+                                <div class="detail-item full">
+                                    <div class="label">Package Description</div>
+                                    <div class="value">{{ shipment.package_description }}</div>
+                                </div>
+                            </div>
                         </div>
 
-
-
-                        <div class="card shadow p-4">
-
-                            <h4 class="mb-3">Tracking Updates</h4>
+                        <!-- Timeline -->
+                        <div class="sl-card">
+                            <div class="sl-card-title">
+                                <span class="icon-badge"><i class="bi bi-clock-history"></i></span>
+                                Tracking Updates
+                            </div>
 
                             {% if tracking_updates %}
-
                                 <div class="timeline">
-
                                     {% for update in tracking_updates %}
-
-                                        <div class="timeline-item">
-
-                                            <h6>{{ update.get_status_display }} -
-
-                                                <small>{{ update.timestamp|date:"M d, Y H:i" }}</small>
-
-                                            </h6>
-
-                                            <p><i class="bi bi-geo-alt"></i> {{ update.location }}</p>
-
-                                            <p>{{ update.description }}</p>
-
+                                        <div class="tl-item">
+                                            <div class="tl-left">
+                                                <div class="tl-dot {% if forloop.first %}latest{% endif %}">
+                                                    <i class="bi {% if forloop.first %}bi-geo-alt-fill{% else %}bi-check-lg{% endif %}"></i>
+                                                </div>
+                                                {% if not forloop.last %}<div class="tl-line"></div>{% endif %}
+                                            </div>
+                                            <div class="tl-body">
+                                                <div class="tl-header">
+                                                    <span class="tl-status">{{ update.get_status_display }}</span>
+                                                    <span class="tl-time">{{ update.timestamp|date:"M d, Y · H:i" }}</span>
+                                                </div>
+                                                <div class="tl-location"><i class="bi bi-geo-alt me-1"></i>{{ update.location }}</div>
+                                                <div class="tl-desc">{{ update.description }}</div>
+                                            </div>
                                         </div>
-
                                     {% endfor %}
-
                                 </div>
-
                             {% else %}
-
-                                <p>No updates available yet.</p>
-
+                                <p style="color:var(--muted); font-size:0.88rem;">No updates available yet.</p>
                             {% endif %}
-
                         </div>
 
                     {% endif %}
-
                 </div>
-
             </div>
 
-
-
-            <!-- Right side: Live Map -->
-
+            <!-- RIGHT: Live Map -->
             <div class="col-lg-5">
-
-                <div class="card shadow p-3">
-
-                    <h4 class="mb-3">Live Map</h4>
-
-                    <div id="map" style="height: 500px; width: 100%; border-radius: 10px;"></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- Footer -->
-
-    <div class="container-fluid bg-dark text-light footer pt-5 mt-5">
-
-        <div class="container py-5">
-
-            <div class="row g-5">
-
-                <div class="col-lg-3 col-md-6">
-
-                    <h4 class="text-light mb-4">Head Office</h4>
-
-                    <p><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
-
-                    <p><i class="fa fa-phone-alt me-3"></i></p>
-
-                    <p><i class="fa fa-envelope me-3"></i>contactswiftlogix@gmail.com</p>
-
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <h4 class="text-light mb-4">Our Services</h4>
-
-                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
-
-                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
-
-                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
-
-                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
-
-                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
-
-                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
-
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <h4 class="text-light mb-4">Quick Links</h4>
-
-                    <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
-
-                    <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
-
-                    <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
-
-                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
-
-                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
-
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <h4 class="text-light mb-4">Newsletter</h4>
-
-                    <p>Subscribe for updates on logistics solutions.</p>
-
-                    <div class="position-relative">
-
-                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-
-                        <button type="button" class="btn btn-primary position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
-
+                <div class="map-card">
+                    <div class="map-header">
+                        <div class="map-title">
+                            <i class="bi bi-map" style="color:var(--primary);"></i>
+                            Live Map
+                        </div>
+                        <div class="live-label">
+                            <div class="live-dot"></div>
+                            Live
+                        </div>
                     </div>
-
+                    <div id="map"></div>
+                    <div class="map-footer">
+                        <div class="map-stat">
+                            <strong id="mapCurrentCity">—</strong>
+                            Current Location
+                        </div>
+                        <div class="map-stat">
+                            <strong id="mapLastUpdated">—</strong>
+                            Last Updated
+                        </div>
+                    </div>
                 </div>
-
             </div>
 
         </div>
-
-        <div class="container text-center">
-
-            <small>&copy; SwiftLogix, All Rights Reserved. Designed by King Eben Tech</small>
-
-        </div>
-
     </div>
 
+    <!-- ── FOOTER ───────────────────────────────────── -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <span class="footer-brand">SwiftLogix</span>
+                    <p class="footer-tagline">Reliable, fast, and transparent logistics solutions across the globe.</p>
+                    <div class="footer-contact">
+                        <p><i class="fa fa-map-marker-alt"></i>123 Airport Road, Accra, Ghana</p>
+                        <p><i class="fa fa-envelope"></i>contactswiftlogix@gmail.com</p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>Services</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'air' %}">Air Freight</a>
+                        <a href="{% url 'sea' %}">Sea Freight</a>
+                        <a href="{% url 'road' %}">Road Transport</a>
+                        <a href="{% url 'express' %}">Express Delivery</a>
+                        <a href="{% url 'warehouse' %}">Warehousing</a>
+                        <a href="{% url 'customs' %}">Customs Clearance</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>Company</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'about' %}">About Us</a>
+                        <a href="{% url 'team' %}">Our Team</a>
+                        <a href="{% url 'pricing' %}">Pricing</a>
+                        <a href="{% url 'feature' %}">Features</a>
+                        <a href="{% url 'testimonial' %}">Testimonials</a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>Help</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'contact' %}">Contact</a>
+                        <a href="{% url 'track' %}">Track Shipment</a>
+                        <a href="{% url 'terms' %}">Terms & Conditions</a>
+                        <a href="{% url 'help' %}">Help & Support</a>
+                        <a href="{% url 'quote' %}">Free Quote</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Newsletter</h5>
+                    <p style="font-size:0.85rem; margin-bottom:0.5rem;">Get logistics updates and shipping insights straight to your inbox.</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Your email address">
+                        <button type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
 
+            <div class="footer-bottom">
+                <span>&copy; 2025 SwiftLogix. All rights reserved. Designed by King Eben Tech.</span>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-    <!-- JS -->
-
+    <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
     <script src="{% static 'js/main.js' %}"></script>
 
-
-
-    <!-- AJAX + Leaflet Map -->
-
+    <!-- ── LIVE MAP SCRIPT ─────────────────────────── -->
     <script>
+    // ── Custom marker icons ───────────────────────────
+    const blueIcon = L.divIcon({
+        className: '',
+        html: `<div style="
+            width:34px; height:34px; background:#FF3E41; border:3px solid #fff;
+            border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+            box-shadow:0 3px 10px rgba(255,62,65,0.45);">
+        </div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -38]
+    });
 
-        let map = L.map('map').setView([5.5560, -0.1969], 5);
+    const greenIcon = L.divIcon({
+        className: '',
+        html: `<div style="
+            width:34px; height:34px; background:#51CFED; border:3px solid #fff;
+            border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+            box-shadow:0 3px 10px rgba(81,207,237,0.45);">
+        </div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -38]
+    });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const pulseIcon = L.divIcon({
+        className: '',
+        html: `<div style="position:relative;">
+            <div style="width:18px; height:18px; background:#FF3E41; border:3px solid #fff;
+                border-radius:50%; box-shadow:0 0 0 6px rgba(255,62,65,0.22);"></div>
+        </div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+        popupAnchor: [0, -14]
+    });
 
-            attribution: '&copy; OpenStreetMap contributors'
+    // ── Geocode city → [lat, lng] via Nominatim ───────
+    async function geocode(city, country) {
+        const q = encodeURIComponent(`${city}, ${country}`);
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+            const data = await res.json();
+            if (data.length > 0) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        } catch(e) {}
+        return null;
+    }
 
-        }).addTo(map);
+    // ── Initialise map ─────────────────────────────────
+    const map = L.map('map', { zoomControl: true, scrollWheelZoom: false });
 
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://carto.com">CARTO</a> &copy; OpenStreetMap contributors',
+        subdomains: 'abcd',
+        maxZoom: 18
+    }).addTo(map);
 
+    // Default view: Ghana
+    map.setView([7.9465, -1.0232], 6);
 
-        let shipmentMarker = null;
+    let senderMarker = null, receiverMarker = null, currentMarker = null, routeLine = null;
 
-        let pathLine = null;
+    function clearMap() {
+        [senderMarker, receiverMarker, currentMarker, routeLine].forEach(l => { if (l) map.removeLayer(l); });
+    }
 
+    function updateMapFooter(city, ts) {
+        document.getElementById('mapCurrentCity').textContent = city || '—';
+        document.getElementById('mapLastUpdated').textContent = ts || '—';
+    }
 
+    async function buildMap(shipmentData) {
+        clearMap();
 
-        function updateMap(shipment) {
+        // Try to get coords from API data first; fall back to geocoding
+        let senderCoords  = shipmentData.sender_lat  && shipmentData.sender_lng
+            ? [parseFloat(shipmentData.sender_lat),   parseFloat(shipmentData.sender_lng)]
+            : await geocode(shipmentData.sender_city,   shipmentData.sender_country);
 
-            const sender = [shipment.sender_lat, shipment.sender_lng];
+        let receiverCoords = shipmentData.receiver_lat && shipmentData.receiver_lng
+            ? [parseFloat(shipmentData.receiver_lat), parseFloat(shipmentData.receiver_lng)]
+            : await geocode(shipmentData.receiver_city, shipmentData.receiver_country);
 
-            const receiver = [shipment.receiver_lat, shipment.receiver_lng];
+        let currentCoords  = shipmentData.current_lat && shipmentData.current_lng
+            ? [parseFloat(shipmentData.current_lat),  parseFloat(shipmentData.current_lng)]
+            : senderCoords; // fallback
 
-            const current = [shipment.current_lat, shipment.current_lng];
+        if (!senderCoords || !receiverCoords) return;
 
+        senderMarker = L.marker(senderCoords, { icon: greenIcon })
+            .addTo(map)
+            .bindPopup(`<strong>📦 Origin</strong><br>${shipmentData.sender_name}<br>${shipmentData.sender_city}, ${shipmentData.sender_country}`);
 
+        receiverMarker = L.marker(receiverCoords, { icon: blueIcon })
+            .addTo(map)
+            .bindPopup(`<strong>🏠 Destination</strong><br>${shipmentData.receiver_name}<br>${shipmentData.receiver_city}, ${shipmentData.receiver_country}`);
 
-            if (shipmentMarker) map.removeLayer(shipmentMarker);
-
-            if (pathLine) map.removeLayer(pathLine);
-
-
-
-            L.marker(sender).addTo(map).bindPopup("Sender: " + shipment.sender_name);
-
-            L.marker(receiver).addTo(map).bindPopup("Receiver: " + shipment.receiver_name);
-
-            shipmentMarker = L.marker(current).addTo(map).bindPopup("Current Location").openPopup();
-
-
-
-            pathLine = L.polyline([sender, current, receiver], { color: 'blue' }).addTo(map);
-
-            map.fitBounds(pathLine.getBounds());
-
+        if (currentCoords) {
+            currentMarker = L.marker(currentCoords, { icon: pulseIcon })
+                .addTo(map)
+                .bindPopup(`<strong>🚛 Current Location</strong>`)
+                .openPopup();
         }
 
+        routeLine = L.polyline(
+            [senderCoords, ...(currentCoords ? [currentCoords] : []), receiverCoords],
+            { color: '#FF3E41', weight: 2.5, opacity: 0.55, dashArray: '8 6' }
+        ).addTo(map);
 
+        map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
-        document.getElementById('trackForm').addEventListener('submit', function (e) {
+        // Footer update
+        const now = new Date();
+        const ts = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        updateMapFooter(shipmentData.current_city || shipmentData.sender_city, ts);
+    }
 
-            e.preventDefault();
+    // ── On page load: if Django rendered shipment, use AJAX to get coords ──
+    {% if shipment %}
+    (async () => {
+        const trackingId = "{{ shipment.tracking_id }}";
+        try {
+            const res = await fetch(`/track/api/?tracking_number=${trackingId}`);
+            const data = await res.json();
+            if (data.success && data.shipment) {
+                await buildMap(data.shipment);
+            } else {
+                // Fallback: geocode from template variables
+                await buildMap({
+                    sender_name:     "{{ shipment.sender_name|escapejs }}",
+                    sender_city:     "{{ shipment.sender_city|escapejs }}",
+                    sender_country:  "{{ shipment.sender_country|escapejs }}",
+                    receiver_name:   "{{ shipment.receiver_name|escapejs }}",
+                    receiver_city:   "{{ shipment.receiver_city|escapejs }}",
+                    receiver_country:"{{ shipment.receiver_country|escapejs }}",
+                });
+            }
+        } catch(e) {
+            // Fallback geocode
+            await buildMap({
+                sender_name:     "{{ shipment.sender_name|escapejs }}",
+                sender_city:     "{{ shipment.sender_city|escapejs }}",
+                sender_country:  "{{ shipment.sender_country|escapejs }}",
+                receiver_name:   "{{ shipment.receiver_name|escapejs }}",
+                receiver_city:   "{{ shipment.receiver_city|escapejs }}",
+                receiver_country:"{{ shipment.receiver_country|escapejs }}",
+            });
+        }
+    })();
+    {% endif %}
 
-            const trackingId = document.getElementById('trackingInput').value.trim();
-
-            if (!trackingId) { alert("Please enter a tracking ID."); return; }
-
-
-
-            fetch(`/track/api/?tracking_number=${trackingId}`)
-
-                .then(res => res.json())
-
-                .then(data => {
-
-                    const results = document.getElementById('trackingResults');
-
-                    if (!data.success) { results.innerHTML = `<div class="alert alert-danger">${data.error}</div>`; return; }
-
-
-
-                    let html = `
-
-                        <div class="card shadow p-4 mb-4">
-
-                            <h4 class="mb-3">Shipment Details</h4>
-
-                            <p><strong>Tracking ID:</strong> ${data.shipment.tracking_number}</p>
-
-                            <p><strong>Status:</strong> ${data.shipment.status}</p>
-
-                            <p><strong>Sender:</strong> ${data.shipment.sender_name} (${data.shipment.sender_city}, ${data.shipment.sender_country})</p>
-
-                            <p><strong>Receiver:</strong> ${data.shipment.receiver_name} (${data.shipment.receiver_city}, ${data.shipment.receiver_country})</p>
-
-                            <p><strong>Type:</strong> ${data.shipment.shipment_type}</p>
-
-                            <p><strong>Pickup Date:</strong> ${data.shipment.pickup_date}</p>
-
-                            <p><strong>Expected Delivery:</strong> ${data.shipment.expected_delivery}</p>
-
-                            ${data.shipment.actual_delivery ? `<p><strong>Delivered On:</strong> ${data.shipment.actual_delivery}</p>` : ""}
-
-                            <p><strong>Weight:</strong> ${data.shipment.weight}</p>
-
-                            <p><strong>Dimensions:</strong> ${data.shipment.dimensions}</p>
-
-                            <p><strong>Description:</strong> ${data.shipment.package_description}</p>
-
-                        </div>
-
-                        <div class="card shadow p-4">
-
-                            <h4 class="mb-3">Tracking Updates</h4>
-
-                            <div class="timeline">
-
-                    `;
-
-                    if (data.tracking_updates.length > 0) {
-
-                        data.tracking_updates.forEach(update => {
-
-                            html += `
-
-                                <div class="timeline-item">
-
-                                    <h6>${update.status} - <small>${update.date} ${update.time}</small></h6>
-
-                                    <p><i class="bi bi-geo-alt"></i> ${update.location}</p>
-
-                                    <p>${update.description}</p>
-
-                                </div>
-
-                            `;
-
-                        });
-
-                    } else { html += `<p>No updates available yet.</p>`; }
-
-                    html += `</div></div>`;
-
-                    results.innerHTML = html;
-
-
-
-                    if (data.shipment.current_lat && data.shipment.current_lng) {
-
-                        updateMap(data.shipment);
-
-                    }
-
-                })
-
-                .catch(err => console.error(err));
-
-        });
-
+    // Auto-refresh map every 60 seconds if tracking_id in URL
+    const urlTrackId = new URLSearchParams(window.location.search).get('tracking_number');
+    if (urlTrackId) {
+        setInterval(async () => {
+            try {
+                const res = await fetch(`/track/api/?tracking_number=${urlTrackId}`);
+                const data = await res.json();
+                if (data.success && data.shipment) await buildMap(data.shipment);
+            } catch(e) {}
+        }, 60000);
+    }
     </script>
 
 </body>
-
 </html>
