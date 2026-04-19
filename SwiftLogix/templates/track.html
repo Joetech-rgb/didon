@@ -446,11 +446,77 @@
             z-index: 1;
         }
 
-        .tl-dot.latest {
+        /* ── SHIPMENT TYPE DOT COLOURS ─────────────── */
+        .tl-dot.type-air {
+            background: rgba(59,130,246,0.12);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .tl-dot.type-air.latest {
+            background: #3b82f6;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.18);
+        }
+
+        .tl-dot.type-sea {
+            background: rgba(6,182,212,0.12);
+            border-color: #06b6d4;
+            color: #06b6d4;
+        }
+        .tl-dot.type-sea.latest {
+            background: #06b6d4;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(6,182,212,0.18);
+        }
+
+        .tl-dot.type-road {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .tl-dot.type-road.latest {
             background: var(--primary);
             color: #fff;
             box-shadow: 0 0 0 4px var(--primary-glow);
         }
+
+        .tl-dot.type-rail {
+            background: rgba(139,92,246,0.12);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+        .tl-dot.type-rail.latest {
+            background: #8b5cf6;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.18);
+        }
+
+        .tl-dot.type-default {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .tl-dot.type-default.latest {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        /* ── SHIPMENT TYPE BADGE (in detail grid) ──── */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        .type-badge.air  { background: rgba(59,130,246,0.12); color: #2563eb; }
+        .type-badge.sea  { background: rgba(6,182,212,0.12);  color: #0891b2; }
+        .type-badge.road { background: var(--primary-glow);   color: var(--primary); }
+        .type-badge.rail { background: rgba(139,92,246,0.12); color: #7c3aed; }
 
         .tl-line {
             flex: 1;
@@ -814,14 +880,25 @@
                         <!-- Status + Route -->
                         <div class="sl-card">
                             <div class="sl-card-title">
-                                <span class="icon-badge"><i class="bi bi-box-seam"></i></span>
+                                <span class="icon-badge">
+                                    {% if shipment.shipment_type == 'air' %}
+                                        <i class="bi bi-airplane-fill"></i>
+                                    {% elif shipment.shipment_type == 'sea' %}
+                                        <i class="bi bi-water"></i>
+                                    {% elif shipment.shipment_type == 'road' %}
+                                        <i class="bi bi-truck"></i>
+                                    {% elif shipment.shipment_type == 'rail' %}
+                                        <i class="bi bi-train-front-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-box-seam"></i>
+                                    {% endif %}
+                                </span>
                                 Shipment Overview
                             </div>
 
                             <!-- Status row -->
                             <div style="margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
                                 <span class="fw-bold" style="font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Status</span>
-                                <!-- FIX 3: Dynamic status badge class based on actual status -->
                                 <span class="status-badge {% if shipment.status == 'delivered' %}delivered{% elif shipment.status == 'in_transit' or shipment.status == 'out_for_delivery' or shipment.status == 'picked_up' %}in-transit{% else %}pending{% endif %}">
                                     <span class="status-dot"></span>
                                     {{ shipment.get_status_display }}
@@ -836,7 +913,18 @@
                                     <div class="city-country">{{ shipment.sender_country }}</div>
                                 </div>
                                 <div class="route-arrow">
-                                    <i class="bi bi-truck route-icon"></i>
+                                    <!-- Dynamic route icon based on shipment type -->
+                                    {% if shipment.shipment_type == 'air' %}
+                                        <i class="bi bi-airplane-fill route-icon"></i>
+                                    {% elif shipment.shipment_type == 'sea' %}
+                                        <i class="bi bi-water route-icon"></i>
+                                    {% elif shipment.shipment_type == 'road' %}
+                                        <i class="bi bi-truck route-icon"></i>
+                                    {% elif shipment.shipment_type == 'rail' %}
+                                        <i class="bi bi-train-front-fill route-icon"></i>
+                                    {% else %}
+                                        <i class="bi bi-box-seam route-icon"></i>
+                                    {% endif %}
                                     <div class="arrow-line"></div>
                                 </div>
                                 <div class="route-city" style="text-align:right;">
@@ -850,12 +938,34 @@
                             <div class="detail-grid">
                                 <div class="detail-item">
                                     <div class="label">Tracking ID</div>
-                                    <!-- FIX 1: Changed tracking_id → tracking_number -->
                                     <div class="value" style="font-family:'Syne',sans-serif; color:var(--primary);">{{ shipment.tracking_number }}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="label">Type</div>
-                                    <div class="value">{{ shipment.get_shipment_type_display }}</div>
+                                    <div class="label">Shipment Type</div>
+                                    <div class="value">
+                                        <!-- Dynamic type badge -->
+                                        {% if shipment.shipment_type == 'air' %}
+                                            <span class="type-badge air">
+                                                <i class="bi bi-airplane-fill"></i> Air Freight
+                                            </span>
+                                        {% elif shipment.shipment_type == 'sea' %}
+                                            <span class="type-badge sea">
+                                                <i class="bi bi-water"></i> Sea Freight
+                                            </span>
+                                        {% elif shipment.shipment_type == 'road' %}
+                                            <span class="type-badge road">
+                                                <i class="bi bi-truck"></i> Road Transport
+                                            </span>
+                                        {% elif shipment.shipment_type == 'rail' %}
+                                            <span class="type-badge rail">
+                                                <i class="bi bi-train-front-fill"></i> Rail Freight
+                                            </span>
+                                        {% else %}
+                                            <span class="type-badge road">
+                                                <i class="bi bi-box-seam"></i> {{ shipment.get_shipment_type_display }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Sender</div>
@@ -867,18 +977,15 @@
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Pickup Date</div>
-                                    <!-- FIX 2: Formatted date with fallback -->
                                     <div class="value">{{ shipment.pickup_date|date:"F d, Y, g:i a"|default:"Not Set" }}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="label">Expected Delivery</div>
-                                    <!-- FIX 2: Formatted date with fallback -->
                                     <div class="value">{{ shipment.expected_delivery_date|date:"F d, Y, g:i a"|default:"Not Set" }}</div>
                                 </div>
                                 {% if shipment.actual_delivery_date %}
                                 <div class="detail-item">
                                     <div class="label">Delivered On</div>
-                                    <!-- FIX 2: Formatted date -->
                                     <div class="value" style="color:var(--success);">{{ shipment.actual_delivery_date|date:"F d, Y, g:i a" }}</div>
                                 </div>
                                 {% endif %}
@@ -909,9 +1016,34 @@
                                     {% for update in tracking_updates %}
                                         <div class="tl-item">
                                             <div class="tl-left">
-                                                <div class="tl-dot {% if forloop.first %}latest{% endif %}">
-                                                    <i class="bi {% if forloop.first %}bi-geo-alt-fill{% else %}bi-check-lg{% endif %}"></i>
-                                                </div>
+
+                                                <!-- ── DYNAMIC ICON DOT based on shipment type ── -->
+                                                {% if shipment.shipment_type == 'air' %}
+                                                    <div class="tl-dot type-air {% if forloop.first %}latest{% endif %}">
+                                                        <i class="bi bi-airplane-fill"></i>
+                                                    </div>
+                                                {% elif shipment.shipment_type == 'sea' %}
+                                                    <div class="tl-dot type-sea {% if forloop.first %}latest{% endif %}">
+                                                        <i class="bi bi-water"></i>
+                                                    </div>
+                                                {% elif shipment.shipment_type == 'road' %}
+                                                    <div class="tl-dot type-road {% if forloop.first %}latest{% endif %}">
+                                                        {% if forloop.first %}
+                                                            <i class="bi bi-geo-alt-fill"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-truck"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                {% elif shipment.shipment_type == 'rail' %}
+                                                    <div class="tl-dot type-rail {% if forloop.first %}latest{% endif %}">
+                                                        <i class="bi bi-train-front-fill"></i>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="tl-dot type-default {% if forloop.first %}latest{% endif %}">
+                                                        <i class="bi {% if forloop.first %}bi-geo-alt-fill{% else %}bi-check-lg{% endif %}"></i>
+                                                    </div>
+                                                {% endif %}
+
                                                 {% if not forloop.last %}<div class="tl-line"></div>{% endif %}
                                             </div>
                                             <div class="tl-body">
@@ -1070,16 +1202,34 @@
         popupAnchor: [0, -38]
     });
 
+    // Dynamic current-location marker based on shipment type
+    const shipmentType = "{{ shipment.shipment_type|default:'road' }}";
+
+    const typeConfig = {
+        air:  { color: '#3b82f6', emoji: '✈️' },
+        sea:  { color: '#06b6d4', emoji: '🚢' },
+        road: { color: '#FF3E41', emoji: '🚛' },
+        rail: { color: '#8b5cf6', emoji: '🚂' },
+    };
+    const cfg = typeConfig[shipmentType] || typeConfig.road;
+
     const pulseIcon = L.divIcon({
         className: '',
-        html: `<div style="position:relative;">
-            <div style="width:18px; height:18px; background:#FF3E41; border:3px solid #fff;
-                border-radius:50%; box-shadow:0 0 0 6px rgba(255,62,65,0.22);"></div>
+        html: `<div style="position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
+            <div style="position:absolute; width:40px; height:40px; background:${cfg.color}; border-radius:50%; opacity:0.2; animation:mapPulse 1.8s infinite;"></div>
+            <div style="position:relative; width:24px; height:24px; background:${cfg.color}; border:3px solid #fff;
+                border-radius:50%; box-shadow:0 0 0 3px ${cfg.color}33; display:flex; align-items:center; justify-content:center; font-size:11px;">
+            </div>
         </div>`,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
-        popupAnchor: [0, -14]
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -24]
     });
+
+    // Inject pulse keyframe into page
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@keyframes mapPulse { 0%,100%{transform:scale(1);opacity:0.2} 50%{transform:scale(1.6);opacity:0.08} }`;
+    document.head.appendChild(styleEl);
 
     // ── Geocode city → [lat, lng] via Nominatim ───────
     async function geocode(city, country) {
@@ -1141,15 +1291,17 @@
             .bindPopup(`<strong>🏠 Destination</strong><br>${shipmentData.receiver_name}<br>${shipmentData.receiver_city}, ${shipmentData.receiver_country}`);
 
         if (currentCoords) {
+            const typeEmoji = { air: '✈️ In Air', sea: '🚢 At Sea', road: '🚛 On Road', rail: '🚂 On Rail' };
             currentMarker = L.marker(currentCoords, { icon: pulseIcon })
                 .addTo(map)
-                .bindPopup(`<strong>🚛 Current Location</strong>`)
+                .bindPopup(`<strong>${typeEmoji[shipmentType] || '📍 Current Location'}</strong>`)
                 .openPopup();
         }
 
+        // Dashed route line in type colour
         routeLine = L.polyline(
             [senderCoords, ...(currentCoords ? [currentCoords] : []), receiverCoords],
-            { color: '#FF3E41', weight: 2.5, opacity: 0.55, dashArray: '8 6' }
+            { color: cfg.color, weight: 2.5, opacity: 0.55, dashArray: '8 6' }
         ).addTo(map);
 
         map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
@@ -1159,10 +1311,9 @@
         updateMapFooter(shipmentData.current_city || shipmentData.sender_city, ts);
     }
 
-    // ── On page load: use tracking_number (FIX 1) ──────
+    // ── On page load ───────────────────────────────────
     {% if shipment %}
     (async () => {
-        // FIX 1: Changed tracking_id → tracking_number
         const trackingNumber = "{{ shipment.tracking_number }}";
         try {
             const res = await fetch(`/track/api/?tracking_number=${trackingNumber}`);
