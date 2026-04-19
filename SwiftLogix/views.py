@@ -105,33 +105,6 @@ def testimonial(request):
 
 def page_not_found_view(request, exception=None):
     return render(request, '404.html', status=404)
-
-def track_shipment(request):
-    context = {
-        'shipment': None,
-        'tracking_updates': None,
-        'error_message': None
-    }
-    
-    if request.method == 'GET' and 'tracking_number' in request.GET:
-        tracking_number = request.GET.get('tracking_number', '').strip()
-        
-        if tracking_number:
-            try:
-                shipment = Shipment.objects.get(tracking_number__iexact=tracking_number)
-                tracking_updates = shipment.tracking_updates.all()
-                context.update({
-                    'shipment': shipment,
-                    'tracking_updates': tracking_updates
-                })
-            except Shipment.DoesNotExist:
-                context['error_message'] = f"No shipment found with tracking number: {tracking_number}"
-        else:
-            context['error_message'] = "Please enter a valid tracking number."
-    
-    return render(request, 'track.html', context)
-
-# API endpoint for AJAX tracking requests
 def track_shipment_api(request):
     if request.method == 'GET':
         tracking_number = request.GET.get('tracking_number', '').strip()
@@ -144,7 +117,7 @@ def track_shipment_api(request):
         
         try:
             shipment = Shipment.objects.get(tracking_number__iexact=tracking_number)
-            tracking_updates = shipment.tracking_updates.all()
+            tracking_updates = shipment.tracking_updates.all().order_by('-timestamp')
             
             updates_data = []
             for update in tracking_updates:
@@ -171,12 +144,16 @@ def track_shipment_api(request):
                     'receiver_city': shipment.receiver_city,
                     'receiver_country': shipment.receiver_country,
                     'shipment_type': shipment.get_shipment_type_display(),
-                    'pickup_date': shipment.pickup_date.strftime('%Y-%m-%d'),
-                    'expected_delivery': shipment.expected_delivery_date.strftime('%Y-%m-%d'),
-                    'actual_delivery': shipment.actual_delivery_date.strftime('%Y-%m-%d') if shipment.actual_delivery_date else None,
+                    'pickup_date': shipment.pickup_date.strftime('%B %d, %Y, %I:%M %p') if shipment.pickup_date else 'Not Set',
+                    'expected_delivery': shipment.expected_delivery_date.strftime('%B %d, %Y, %I:%M %p') if shipment.expected_delivery_date else 'Not Set',
+                    'actual_delivery': shipment.actual_delivery_date.strftime('%B %d, %Y, %I:%M %p') if shipment.actual_delivery_date else None,
                     'weight': str(shipment.weight),
                     'dimensions': shipment.dimensions,
-                    'package_description': shipment.package_description
+                    'package_description': shipment.package_description,
+                    # ← ADDED: current location for live map
+                    'current_lat': shipment.current_latitude,
+                    'current_lng': shipment.current_longitude,
+                    'current_city': shipment.sender_city,
                 },
                 'tracking_updates': updates_data
             })
@@ -191,7 +168,6 @@ def track_shipment_api(request):
         'success': False,
         'error': 'Invalid request method'
     })
-
 
 # ============================================
 # AUTHENTICATION VIEWS (UPDATED & IMPROVED)
