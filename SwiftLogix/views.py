@@ -67,13 +67,24 @@ def customs(request):
 
 def express(request):
     return render(request, 'express.html')
-
 def track(request):
     tracking_number = request.GET.get("tracking_number")
     shipment = None
+    tracking_updates = []
+    error_message = None
+
     if tracking_number:
-        shipment = get_object_or_404(Shipment, tracking_id=tracking_number)
-    return render(request, "track.html", {"shipment": shipment})
+        try:
+            shipment = Shipment.objects.get(tracking_number=tracking_number)
+            tracking_updates = shipment.tracking_updates.all().order_by('-timestamp')
+        except Shipment.DoesNotExist:
+            error_message = f"No shipment found with tracking number: {tracking_number}"
+
+    return render(request, "track.html", {
+        "shipment": shipment,
+        "tracking_updates": tracking_updates,
+        "error_message": error_message,
+    })
 
 def quote(request):
     if request.method == 'POST':
