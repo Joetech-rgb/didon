@@ -12,29 +12,298 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'logistica-1.0.0/css/style.css' %}">
+
     <style>
-        .profile-card {
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        :root {
+            --primary: #FF3E41;
+            --secondary: #51CFED;
+            --dark: #060315;
+            --light: #F8F2F0;
+            --surface: #ffffff;
+            --border: #ecddd9;
+            --muted: #888;
         }
-        .form-group label {
-            font-weight: 500;
+
+        body { background: var(--light); }
+
+        /* ── PAGE HEADER ── */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #8a0d0f 100%);
+            padding: 3rem 0 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        .profile-card input[type="text"],
-        .profile-card input[type="email"],
-        .profile-card textarea,
-        .profile-card select {
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .profile-header .container { position: relative; }
+
+        .profile-header h1 {
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.35rem;
+        }
+
+        .profile-header p { color: rgba(255,255,255,0.72); font-size: 0.92rem; margin: 0; }
+
+        /* ── AVATAR ── */
+        .avatar-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .main-content { padding: 2.5rem 0 4rem; }
+
+        /* ── SECTION CARD ── */
+        .sl-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.04);
+            margin-bottom: 1.25rem;
+        }
+
+        .sl-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sl-card-title .title-bar {
+            width: 4px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ── FORM STYLING ── */
+        .form-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .sl-input {
+            height: 48px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 0 1rem;
+            font-size: 0.9rem;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.22s;
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
         }
+
+        .sl-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(255,62,65,0.1);
+            outline: none;
+        }
+
+        textarea.sl-input {
+            height: auto;
+            padding: 0.75rem 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select.sl-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        /* Override Django form widget defaults */
+        .sl-card input[type="text"],
+        .sl-card input[type="email"],
+        .sl-card input[type="password"],
+        .sl-card textarea,
+        .sl-card select {
+            height: 48px;
+            border: 1.5px solid var(--border) !important;
+            border-radius: 10px !important;
+            padding: 0 1rem !important;
+            font-size: 0.9rem !important;
+            background: var(--light) !important;
+            color: var(--dark) !important;
+            transition: all 0.22s !important;
+            width: 100% !important;
+            box-shadow: none !important;
+        }
+
+        .sl-card textarea {
+            height: auto !important;
+            padding: 0.75rem 1rem !important;
+            min-height: 100px !important;
+        }
+
+        .sl-card input:focus,
+        .sl-card textarea:focus,
+        .sl-card select:focus {
+            border-color: var(--primary) !important;
+            background: #fff !important;
+            box-shadow: 0 0 0 3px rgba(255,62,65,0.1) !important;
+            outline: none !important;
+        }
+
+        /* ── SAVE BUTTON ── */
+        .save-btn {
+            height: 50px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0 2.5rem;
+            transition: all 0.22s;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #d92d30;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,62,65,0.3);
+        }
+
+        /* ── SIDEBAR ── */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.04);
+        }
+
+        .info-card-header {
+            background: linear-gradient(135deg, var(--primary), #d92d30);
+            padding: 1.5rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .info-card-header .avatar {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 0.75rem;
+        }
+
+        .info-card-header .username {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .info-card-header .role {
+            font-size: 0.78rem;
+            opacity: 0.75;
+        }
+
+        .info-card-body {
+            padding: 1.25rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--dark);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+        .info-row i { color: var(--primary); width: 16px; }
+
+        /* ── ACTION LINKS ── */
+        .action-list { list-style: none; padding: 0; margin: 0; }
+
+        .action-list li a {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .action-list li a:hover { background: var(--light); }
+
+        .action-list li a.danger { color: var(--primary); }
+        .action-list li a.danger:hover { background: rgba(255,62,65,0.08); }
+
+        .action-list li a i { width: 18px; text-align: center; }
+
+        /* ── TIP BOX ── */
+        .tip-box {
+            background: rgba(81,207,237,0.1);
+            border: 1px solid rgba(81,207,237,0.25);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.82rem;
+            color: #1a8fa8;
+            display: flex;
+            gap: 0.6rem;
+            align-items: flex-start;
+            margin-top: 1rem;
+        }
+
+        .tip-box i { flex-shrink: 0; margin-top: 2px; }
     </style>
 </head>
 <body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
         <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
             <h2 class="mb-2 text-white">SwiftLogix</h2>
@@ -44,92 +313,182 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="{% url 'home' %}" class="nav-item nav-link">Home</a>
+                <a href="{% url 'home' %}"      class="nav-item nav-link">Home</a>
                 <a href="{% url 'dashboard' %}" class="nav-item nav-link">Dashboard</a>
-                <a href="{% url 'profile' %}" class="nav-item nav-link active">Profile</a>
-                <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
+                <a href="{% url 'profile' %}"   class="nav-item nav-link active">Profile</a>
+                <a href="{% url 'logout' %}"    class="nav-item nav-link text-danger">Logout</a>
             </div>
+            <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
+                <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
+                <button class="btn btn-primary" type="submit">Track</button>
+            </form>
         </div>
     </nav>
+    <!-- Navbar End -->
 
-    <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url({% static 'logistica-1.0.0/img/carousel-1.jpg' %}); background-size: cover;">
-        <div class="container py-5">
-            <h1 class="display-3 text-white mb-3 animated slideInDown">Account Profile</h1>
-            <p class="text-white">View and update your personal and security details</p>
-        </div>
-    </div>
-
-    <div class="container-xxl py-5">
+    <!-- Profile Header -->
+    <div class="profile-header">
         <div class="container">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle"><i class="fa fa-user"></i></div>
+                <div>
+                    <div style="font-size:0.78rem; color:rgba(255,255,255,0.6); font-weight:600; letter-spacing:0.07em; text-transform:uppercase; margin-bottom:0.3rem;">
+                        <i class="fa fa-user-cog me-1"></i> Account Profile
                     </div>
-                {% endfor %}
-            {% endif %}
-
-            <div class="row g-5 justify-content-center">
-                <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="profile-card p-5">
-                        <h3 class="mb-4 text-primary">Personal Details</h3>
-                        <p class="text-muted mb-4">You are logged in as <strong>{{ user.username }}</strong>.</p>
-                        
-                        <form method="post" action="{% url 'profile' %}">
-                            {% csrf_token %}
-                            
-                            {% for field in user_form %}
-                                <div class="mb-3">
-                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% if field.help_text %}
-                                        <div class="form-text">{{ field.help_text }}</div>
-                                    {% endif %}
-                                    {% for error in field.errors %}
-                                        <div class="alert alert-danger mt-1 p-2">{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endfor %}
-
-                            {% if profile_form %}
-                                <h4 class="mt-5 mb-3 text-primary">Contact & Address</h4>
-                                {% for field in profile_form %}
-                                    <div class="mb-3">
-                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                        {{ field }}
-                                        {% for error in field.errors %}
-                                            <div class="alert alert-danger mt-1 p-2">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-
-                            <div class="text-center mt-5">
-                                <button type="submit" class="btn btn-primary py-3 px-5">Update Profile</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="profile-card p-4">
-                        <h4 class="mb-3 text-danger">Security Actions</h4>
-                        <div class="list-group">
-                            <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
-                                <i class="fa fa-sign-out-alt me-2"></i>Log Out
-                            </a>
-                        </div>
-                        <div class="mt-4 p-3 border rounded text-center">
-                            <i class="fa fa-info-circle text-primary mb-2"></i>
-                            <p class="small mb-0">Changes here are reflected across your dashboard and services.</p>
-                        </div>
-                    </div>
+                    <h1>{{ user.first_name|default:user.username }}'s Profile</h1>
+                    <p>Update your personal details and contact information</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="container main-content">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert" style="border-radius:12px; border:none;">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-4">
+
+            <!-- Left: Forms -->
+            <div class="col-lg-8">
+
+                <form method="post" action="{% url 'profile' %}">
+                    {% csrf_token %}
+
+                    <!-- Personal Details -->
+                    <div class="sl-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="sl-card-title">
+                            <span class="title-bar"></span> Personal Details
+                        </div>
+                        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1.25rem;">
+                            Logged in as <strong style="color:var(--dark);">{{ user.username }}</strong>
+                        </p>
+
+                        {% for field in user_form %}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div style="font-size:0.78rem; color:var(--muted); margin-top:0.3rem;">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1 p-2" style="font-size:0.82rem; border-radius:8px;">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Contact & Address -->
+                    {% if profile_form %}
+                    <div class="sl-card wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="sl-card-title">
+                            <span class="title-bar"></span> Contact & Address
+                        </div>
+                        {% for field in profile_form %}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1 p-2" style="font-size:0.82rem; border-radius:8px;">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Save -->
+                    <div class="d-flex justify-content-end wow fadeInUp" data-wow-delay="0.3s">
+                        <button type="submit" class="save-btn">
+                            <i class="fa fa-save me-2"></i> Save Changes
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div class="col-lg-4">
+
+                <!-- Account card -->
+                <div class="info-card mb-3 wow fadeInUp" data-wow-delay="0.15s">
+                    <div class="info-card-header">
+                        <div class="avatar"><i class="fa fa-user"></i></div>
+                        <div class="username">{{ user.username }}</div>
+                        <div class="role">SwiftLogix Client</div>
+                    </div>
+                    <div class="info-card-body">
+                        {% if user.email %}
+                        <div class="info-row">
+                            <i class="fa fa-envelope"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        {% endif %}
+                        {% if user.first_name or user.last_name %}
+                        <div class="info-row">
+                            <i class="fa fa-id-card"></i>
+                            <span>{{ user.first_name }} {{ user.last_name }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="info-row">
+                            <i class="fa fa-calendar-alt"></i>
+                            <span>Joined {{ user.date_joined|date:"M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="sl-card wow fadeInUp" data-wow-delay="0.25s">
+                    <div class="sl-card-title">
+                        <span class="title-bar"></span> Account Actions
+                    </div>
+                    <ul class="action-list">
+                        <li>
+                            <a href="{% url 'dashboard' %}">
+                                <i class="fa fa-tachometer-alt"></i> Go to Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'track' %}">
+                                <i class="fa fa-search-location"></i> Track a Shipment
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'quote' %}">
+                                <i class="fa fa-file-invoice"></i> Request a Quote
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contact' %}">
+                                <i class="fa fa-headphones"></i> Contact Support
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}" class="danger">
+                                <i class="fa fa-sign-out-alt"></i> Log Out
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tip-box">
+                        <i class="fa fa-info-circle"></i>
+                        <span>Changes to your profile are reflected across your dashboard and all services immediately.</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 6rem;">
         <div class="container py-5">
             <div class="row g-5">
@@ -138,12 +497,37 @@
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i></p>
                     <p class="mb-2"><i class="fa fa-envelope me-3"></i>contactswiftlogix@gmail.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Our Services</h4>
+                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Quick Links</h4>
                     <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
                     <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
-                    <a class="btn btn-link" href="{% url 'services' %}">Services</a>
+                    <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
+                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Newsletter</h4>
+                    <p>Subscribe for updates on our latest logistics solutions and offers.</p>
+                    <div class="position-relative mx-auto" style="max-width: 400px;">
+                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -160,10 +544,9 @@
             </div>
         </div>
     </div>
+    <!-- Footer End -->
 
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top">
-        <i class="bi bi-arrow-up"></i>
-    </a>
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top"><i class="bi bi-arrow-up"></i></a>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -171,6 +554,7 @@
     <script src="{% static 'logistica-1.0.0/lib/easing/easing.min.js' %}"></script>
     <script src="{% static 'logistica-1.0.0/lib/waypoints/waypoints.min.js' %}"></script>
     <script src="{% static 'logistica-1.0.0/lib/counterup/counterup.min.js' %}"></script>
-    <script src="{% static 'logistica-1.0.0/js/main.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/js/main.js' %}?v=2"></script>
 </body>
 </html>

@@ -12,10 +12,312 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{% static 'logistica-1.0.0/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'logistica-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'logistica-1.0.0/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'logistica-1.0.0/css/style.css' %}">
+
+    <style>
+        :root {
+            --primary: #FF3E41;
+            --secondary: #51CFED;
+            --dark: #060315;
+            --light: #F8F2F0;
+            --surface: #ffffff;
+            --border: #ecddd9;
+            --muted: #888;
+        }
+
+        body { background: var(--light); }
+
+        /* ── PAGE HEADER ── */
+        .dash-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #8a0d0f 100%);
+            padding: 3rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .dash-header .container { position: relative; }
+
+        .dash-header h1 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .dash-header p { color: rgba(255,255,255,0.75); font-size: 0.95rem; margin: 0; }
+
+        .dash-header .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .header-actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 0.45rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .header-actions a:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+        }
+
+        .header-actions a.primary-action {
+            background: #fff;
+            color: var(--primary);
+            border-color: #fff;
+        }
+
+        .header-actions a.primary-action:hover {
+            background: var(--light);
+        }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(255,62,65,0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.red   { background: rgba(255,62,65,0.12);  color: var(--primary); }
+        .stat-icon.cyan  { background: rgba(81,207,237,0.15); color: #1a8fa8; }
+        .stat-icon.dark  { background: rgba(6,3,21,0.08);     color: var(--dark); }
+
+        .stat-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* ── SECTION CARDS ── */
+        .sl-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 12px rgba(255,62,65,0.04);
+        }
+
+        .sl-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sl-card-title .title-bar {
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ── QUICK ACTIONS ── */
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            background: var(--light);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1rem;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.22s;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,62,65,0.3);
+        }
+
+        .quick-action-btn .qa-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(255,62,65,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--primary);
+            transition: all 0.22s;
+        }
+
+        .quick-action-btn:hover .qa-icon {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .quick-action-btn .qa-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ── TABLE ── */
+        .sl-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .sl-table thead th {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--light);
+        }
+
+        .sl-table thead th:first-child { border-radius: 8px 0 0 8px; }
+        .sl-table thead th:last-child  { border-radius: 0 8px 8px 0; }
+
+        .sl-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        .sl-table tbody tr:last-child { border-bottom: none; }
+        .sl-table tbody tr:hover { background: var(--light); }
+
+        .sl-table tbody td {
+            padding: 0.9rem 0.85rem;
+            font-size: 0.88rem;
+            color: var(--dark);
+            vertical-align: middle;
+        }
+
+        .tracking-id {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .badge-status.transit   { background: rgba(81,207,237,0.15); color: #1a8fa8; }
+        .badge-status.delivered { background: rgba(23,178,106,0.12); color: #15864f; }
+        .badge-status.pending   { background: rgba(247,144,9,0.12);  color: #b06000; }
+        .badge-status.default   { background: rgba(255,62,65,0.1);   color: var(--primary); }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--muted);
+        }
+
+        .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4; }
+        .empty-state p { font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .empty-state a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+        /* ── MAIN CONTENT ── */
+        .main-content { padding: 2.5rem 0 4rem; }
+
+        /* ── LOGOUT BADGE ── */
+        .logout-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,62,65,0.1);
+            color: var(--primary);
+            border: 1px solid rgba(255,62,65,0.2);
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .logout-chip:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow border-top border-5 border-primary sticky-top p-0">
         <a href="{% url 'home' %}" class="navbar-brand bg-primary d-flex align-items-center px-4 px-lg-5">
@@ -26,161 +328,219 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="{% url 'home' %}" class="nav-item nav-link">Home</a>
+                <a href="{% url 'home' %}"      class="nav-item nav-link">Home</a>
                 <a href="{% url 'dashboard' %}" class="nav-item nav-link active">Dashboard</a>
-                <a href="{% url 'profile' %}" class="nav-item nav-link">Profile</a>
-                <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
+                <a href="{% url 'profile' %}"   class="nav-item nav-link">Profile</a>
+                <a href="{% url 'logout' %}"    class="nav-item nav-link text-danger">Logout</a>
             </div>
+            <form class="d-flex align-items-center ms-lg-4" method="get" action="{% url 'track' %}">
+                <input class="form-control me-2" type="text" name="tracking_number" placeholder="Enter Tracking ID" style="height: 40px;">
+                <button class="btn btn-primary" type="submit">Track</button>
+            </form>
         </div>
     </nav>
     <!-- Navbar End -->
 
-    <!-- Page Header Start -->
-    <div class="container-fluid page-header py-5" style="background: linear-gradient(rgba(6, 3, 21, .5), rgba(6, 3, 21, .5)), url('{% static 'logistica-1.0.0/img/carousel-1.jpg' %}'); background-size: cover;"></div>
-        <div class="container py-5">
-            <h1 class="display-3 text-white mb-3 animated slideInDown">Welcome, {{ user.first_name|default:user.username }}!</h1>
-            <p class="text-white">Manage your shipments and track your orders</p>
+    <!-- Dashboard Header -->
+    <div class="dash-header">
+        <div class="container">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                <div>
+                    <div style="font-size:0.78rem; color:rgba(255,255,255,0.6); font-weight:600; letter-spacing:0.07em; text-transform:uppercase; margin-bottom:0.4rem;">
+                        <i class="fa fa-tachometer-alt me-1"></i> Dashboard
+                    </div>
+                    <h1>Welcome back, {{ user.first_name|default:user.username }}!</h1>
+                    <p>Here's an overview of your shipments and account activity.</p>
+                    <div class="header-actions">
+                        <a href="{% url 'quote' %}" class="primary-action"><i class="fa fa-file-invoice"></i> Request Quote</a>
+                        <a href="{% url 'track' %}"><i class="fa fa-search"></i> Track Shipment</a>
+                        <a href="{% url 'profile' %}"><i class="fa fa-user"></i> My Profile</a>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-chip" style="margin-top:0.25rem;">
+                    <i class="fa fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </div>
-    <!-- Page Header End -->
 
-    <div class="container-xxl py-5">
-        <div class="container">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+    <!-- Main Content -->
+    <div class="container main-content">
 
-            <!-- Stats Cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-light rounded p-4 text-center">
-                        <i class="fa fa-box fa-3x text-primary mb-3"></i>
-                        <h3 class="mb-2">{{ total_shipments }}</h3>
-                        <p class="mb-0">Total Shipments</p>
-                    </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert" style="border-radius:12px; border:none;">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="bg-light rounded p-4 text-center">
-                        <i class="fa fa-file-invoice fa-3x text-primary mb-3"></i>
-                        <h3 class="mb-2">{{ total_quotes }}</h3>
-                        <p class="mb-0">Quote Requests</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="bg-light rounded p-4 text-center">
-                        <i class="fa fa-user fa-3x text-primary mb-3"></i>
-                        <h3 class="mb-2">{{ user.username }}</h3>
-                        <p class="mb-0">Account Active</p>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Stat Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fa fa-box"></i></div>
+                    <div>
+                        <div class="stat-value">{{ total_shipments }}</div>
+                        <div class="stat-label">Total Shipments</div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="stat-card">
+                    <div class="stat-icon cyan"><i class="fa fa-file-invoice"></i></div>
+                    <div>
+                        <div class="stat-value">{{ total_quotes }}</div>
+                        <div class="stat-label">Quote Requests</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="stat-card">
+                    <div class="stat-icon dark"><i class="fa fa-user-check"></i></div>
+                    <div>
+                        <div class="stat-value" style="font-size:1.1rem;">{{ user.username }}</div>
+                        <div class="stat-label">Account Active</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- Quick Actions -->
-            <div class="row g-4 mb-5">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-light rounded p-5">
-                        <h3 class="mb-4">Quick Actions</h3>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <a href="{% url 'quote' %}" class="btn btn-primary w-100 py-3">
-                                    <i class="fa fa-file-invoice me-2"></i>Request Quote
-                                </a>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{% url 'track' %}" class="btn btn-primary w-100 py-3">
-                                    <i class="fa fa-search me-2"></i>Track Shipment
-                                </a>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{% url 'contact' %}" class="btn btn-primary w-100 py-3">
-                                    <i class="fa fa-phone me-2"></i>Contact Support
-                                </a>
-                            </div>
+        <div class="row g-4">
+
+            <!-- Left column -->
+            <div class="col-lg-8">
+
+                <!-- Recent Shipments -->
+                <div class="sl-card mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="sl-card-title">
+                        <span class="title-bar"></span> Recent Shipments
+                    </div>
+                    {% if shipments %}
+                        <div class="table-responsive">
+                            <table class="sl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tracking No.</th>
+                                        <th>Status</th>
+                                        <th>Route</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for shipment in shipments %}
+                                    <tr>
+                                        <td><span class="tracking-id">{{ shipment.tracking_number }}</span></td>
+                                        <td>
+                                            <span class="badge-status default">{{ shipment.get_status_display }}</span>
+                                        </td>
+                                        <td style="font-size:0.85rem;">{{ shipment.sender_city }} → {{ shipment.receiver_city }}</td>
+                                        <td style="font-size:0.85rem;">{{ shipment.get_shipment_type_display }}</td>
+                                        <td style="font-size:0.82rem; color:var(--muted);">{{ shipment.created_at|date:"M d, Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa fa-box-open d-block"></i>
+                            <p>No shipments yet.</p>
+                            <a href="{% url 'quote' %}">Request a quote to get started →</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Recent Quote Requests -->
+                <div class="sl-card wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="sl-card-title">
+                        <span class="title-bar"></span> Recent Quote Requests
+                    </div>
+                    {% if quote_requests %}
+                        <div class="table-responsive">
+                            <table class="sl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Freight Type</th>
+                                        <th>Origin → Destination</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for quote in quote_requests %}
+                                    <tr>
+                                        <td style="font-size:0.88rem;">{{ quote.get_freight_type_display }}</td>
+                                        <td style="font-size:0.85rem;">{{ quote.origin }} → {{ quote.destination }}</td>
+                                        <td>
+                                            <span class="badge-status pending">{{ quote.get_status_display }}</span>
+                                        </td>
+                                        <td style="font-size:0.82rem; color:var(--muted);">{{ quote.created_at|date:"M d, Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa fa-file-invoice d-block"></i>
+                            <p>No quote requests yet.</p>
+                            <a href="{% url 'quote' %}">Request your first quote →</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Right column: Quick Actions -->
+            <div class="col-lg-4">
+                <div class="sl-card wow fadeInUp" data-wow-delay="0.15s">
+                    <div class="sl-card-title">
+                        <span class="title-bar"></span> Quick Actions
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a href="{% url 'quote' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-file-invoice"></i></div>
+                                <span class="qa-label">Request Quote</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'track' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-search-location"></i></div>
+                                <span class="qa-label">Track Package</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'contact' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-headphones"></i></div>
+                                <span class="qa-label">Get Support</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'profile' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-user-edit"></i></div>
+                                <span class="qa-label">Edit Profile</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'services' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-globe"></i></div>
+                                <span class="qa-label">Our Services</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'logout' %}" class="quick-action-btn">
+                                <div class="qa-icon"><i class="fa fa-sign-out-alt"></i></div>
+                                <span class="qa-label">Log Out</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Shipments -->
-            <div class="row g-4 mb-5">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-light rounded p-5">
-                        <h3 class="mb-4">Recent Shipments</h3>
-                        {% if shipments %}
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Tracking Number</th>
-                                            <th>Status</th>
-                                            <th>From → To</th>
-                                            <th>Type</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for shipment in shipments %}
-                                        <tr>
-                                            <td><strong>{{ shipment.tracking_number }}</strong></td>
-                                            <td>
-                                                <span class="badge bg-primary">{{ shipment.get_status_display }}</span>
-                                            </td>
-                                            <td>{{ shipment.sender_city }} → {{ shipment.receiver_city }}</td>
-                                            <td>{{ shipment.get_shipment_type_display }}</td>
-                                            <td>{{ shipment.created_at|date:"M d, Y" }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <p class="text-muted mb-0">No shipments yet. <a href="{% url 'quote' %}">Request a quote</a> to get started!</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Quote Requests -->
-            <div class="row g-4">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-light rounded p-5">
-                        <h3 class="mb-4">Recent Quote Requests</h3>
-                        {% if quote_requests %}
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Freight Type</th>
-                                            <th>Origin → Destination</th>
-                                            <th>Status</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for quote in quote_requests %}
-                                        <tr>
-                                            <td>{{ quote.get_freight_type_display }}</td>
-                                            <td>{{ quote.origin }} → {{ quote.destination }}</td>
-                                            <td>
-                                                <span class="badge bg-warning text-dark">{{ quote.get_status_display }}</span>
-                                            </td>
-                                            <td>{{ quote.created_at|date:"M d, Y" }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <p class="text-muted mb-0">No quote requests yet. <a href="{% url 'quote' %}">Request your first quote</a>!</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -193,12 +553,37 @@
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Airport Road, Accra, Ghana</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i></p>
                     <p class="mb-2"><i class="fa fa-envelope me-3"></i>contactswiftlogix@gmail.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Our Services</h4>
+                    <a class="btn btn-link" href="{% url 'air' %}">Air Freight</a>
+                    <a class="btn btn-link" href="{% url 'sea' %}">Sea Freight</a>
+                    <a class="btn btn-link" href="{% url 'road' %}">Road Transport</a>
+                    <a class="btn btn-link" href="{% url 'express' %}">Express Delivery</a>
+                    <a class="btn btn-link" href="{% url 'warehouse' %}">Warehousing</a>
+                    <a class="btn btn-link" href="{% url 'customs' %}">Customs Clearance</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Quick Links</h4>
                     <a class="btn btn-link" href="{% url 'about' %}">About Us</a>
                     <a class="btn btn-link" href="{% url 'contact' %}">Contact</a>
-                    <a class="btn btn-link" href="{% url 'services' %}">Services</a>
+                    <a class="btn btn-link" href="{% url 'track' %}">Track Shipment</a>
+                    <a class="btn btn-link" href="{% url 'terms' %}">Terms & Conditions</a>
+                    <a class="btn btn-link" href="{% url 'help' %}">Help & Support</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Newsletter</h4>
+                    <p>Subscribe for updates on our latest logistics solutions and offers.</p>
+                    <div class="position-relative mx-auto" style="max-width: 400px;">
+                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -217,9 +602,7 @@
     </div>
     <!-- Footer End -->
 
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top">
-        <i class="bi bi-arrow-up"></i>
-    </a>
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top"><i class="bi bi-arrow-up"></i></a>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -227,33 +610,7 @@
     <script src="{% static 'logistica-1.0.0/lib/easing/easing.min.js' %}"></script>
     <script src="{% static 'logistica-1.0.0/lib/waypoints/waypoints.min.js' %}"></script>
     <script src="{% static 'logistica-1.0.0/lib/counterup/counterup.min.js' %}"></script>
-    <script src="{% static 'logistica-1.0.0/js/main.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'logistica-1.0.0/js/main.js' %}?v=2"></script>
 </body>
 </html>
-<style>
-    /* Animated floating background circles */
-    .animated-bg {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-    }
-    .animated-bg span {
-        position: absolute;
-        display: block;
-        width: 80px;
-        height: 80px;
-        background: rgba(108, 99, 255, 0.2);
-        border-radius: 50%;
-        animation: float 6s infinite;
-        bottom: -50px;
-    }
-    .animated-bg span:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .animated-bg span:nth-child(2) { left: 30%; animation-delay: 2s; }
-    .animated-bg span:nth-child(3) { left: 50%; animation-delay: 4s; }
-    .animated-bg span:nth-child(4) { left: 70%; animation-delay: 1s; }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
-    }
